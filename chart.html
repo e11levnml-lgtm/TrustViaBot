@@ -7,41 +7,50 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://s3.tradingview.com/tv.js"></script>
     <style>
-        body { 
-            background: #0b0b0b; 
-            color: white; 
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
-            margin: 0; 
-            overflow: hidden; 
-            height: 100dvh; 
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100dvh;
+            width: 100%;
+            overflow: hidden;
+            background: #0b0b0b;
         }
-        #tv-chart { 
-            flex: 1; 
-            min-height: 200px; 
-            width: 100%; 
+        #tv-chart {
+            flex: 1;
+            width: 100%;
+            height: 100%;
         }
-        .header { 
-            background: #0b0b0b; 
-            border-bottom: 1px solid #1a1a1a; 
-            padding: 12px 16px; 
+        .header {
+            background: #0b0b0b;
+            border-bottom: 1px solid #1a1a1a;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-        .btn-action { 
-            font-weight: 700; 
-            padding: 14px 24px; 
-            border-radius: 9999px; 
-            transition: all 0.2s; 
-            font-size: 15px; 
+        .balance-section {
+            background: #0f0f0f;
+            padding: 20px 16px;
+            text-align: center;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        .btn-action {
+            font-weight: 700;
+            padding: 14px;
+            border-radius: 9999px;
+            transition: all 0.2s;
+            font-size: 16px;
         }
         .btn-receive { background: #00d676; color: black; }
-        .btn-receive:hover { background: #00e07f; transform: translateY(-1px); }
+        .btn-receive:hover { background: #00e07f; }
         .btn-send { background: #1a1a1a; color: white; border: 1px solid #333; }
         .btn-send:hover { background: #222; }
     </style>
 </head>
-<body class="flex flex-col h-dvh">
+<body class="flex flex-col">
 
     <!-- Шапка -->
-    <div class="header flex items-center justify-between">
+    <div class="header">
         <button onclick="history.back()" class="text-3xl text-[#00d676] font-bold">←</button>
         <div class="text-center">
             <p id="c-name" class="font-bold text-xl">Загрузка...</p>
@@ -50,47 +59,47 @@
         <div class="w-10"></div>
     </div>
 
-    <!-- Баланс блок -->
-    <div class="p-6 text-center bg-[#0f0f0f] border-b border-[#1a1a1a]">
-        <h1 id="c-bal-display" class="text-4xl font-extrabold tracking-tight mb-1">—</h1>
-        <p id="c-usd-display" class="text-[#00d676] text-2xl font-bold">— $</p>
+    <!-- Баланс -->
+    <div class="balance-section">
+        <h1 id="c-bal-display" class="text-4xl font-extrabold tracking-tight mb-1">0.0000</h1>
+        <p id="c-usd-display" class="text-[#00d676] text-2xl font-bold">0 $</p>
     </div>
 
-    <!-- График (заполняет остаток экрана) -->
-    <div id="tv-chart" class="flex-1"></div>
+    <!-- График — занимает весь остаток экрана -->
+    <div id="tv-chart"></div>
 
-    <!-- Кнопки снизу (фиксированные) -->
-    <div class="p-5 grid grid-cols-2 gap-4 border-t border-[#1a1a1a] bg-[#0b0b0b]">
+    <!-- Кнопки снизу -->
+    <div class="p-4 grid grid-cols-2 gap-4 border-t border-[#1a1a1a] bg-[#0b0b0b]">
         <button onclick="location.href='receive.html'" class="btn-action btn-receive">ПОЛУЧИТЬ</button>
         <button onclick="location.href='send.html'" class="btn-action btn-send">ОТПРАВИТЬ</button>
     </div>
 
     <script>
         const params = new URLSearchParams(window.location.search);
-        const id  = params.get('id')  || 'ETH';
-        const bal = parseFloat(params.get('bal')) || 0;
-        const sym = params.get('sym') || 'ETHUSDT';
+        const id  = params.get('id')  || 'WBTC';
+        const bal = parseFloat(params.get('bal')) || 0.3541;
+        const sym = params.get('sym') || 'WBTCUSDT';
 
         document.getElementById('c-name').textContent = id.toUpperCase();
-        document.getElementById('c-bal-display').textContent = `${bal.toFixed(4)} ${id}`;
+        document.getElementById('c-bal-display').textContent = `${bal.toFixed(6)} ${id}`;
 
         async function updatePrice() {
             try {
                 const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${sym}`);
                 const data = await res.json();
                 const price = parseFloat(data.price);
-                const usdVal = bal > 0 ? (bal * price).toLocaleString('ru-RU', {minimumFractionDigits: 2}) : price.toLocaleString('ru-RU', {minimumFractionDigits: 2});
-                document.getElementById('c-usd-display').textContent = `${usdVal} $`;
+                const usdVal = bal * price;
+                document.getElementById('c-usd-display').textContent = `${usdVal.toLocaleString('ru-RU', {minimumFractionDigits: 2})} $`;
             } catch {
                 document.getElementById('c-usd-display').textContent = '— $';
             }
         }
 
-        // Инициализация графика с мобильным пресетом
+        // Полноэкранный мобильный график
         new TradingView.widget({
-            "autosize": true,               // занимает весь контейнер
-            "symbol": "BINANCE:" + sym,
-            "interval": "60",               // 1 час по умолчанию
+            "autosize": true,
+            "symbol": `BINANCE:${sym}`,
+            "interval": "60",               // 1 час
             "timezone": "Etc/UTC",
             "theme": "dark",
             "style": "1",                   // свечи
@@ -99,14 +108,16 @@
             "enable_publishing": false,
             "allow_symbol_change": false,
             "container_id": "tv-chart",
-            "hide_top_toolbar": true,       // убираем лишнюю панель сверху
+            "hide_top_toolbar": true,
             "hide_legend": true,
+            "hide_side_toolbar": true,      // убираем боковую панель
             "studies": ["Volume@tv-basicstudies"],
-            "preset": "mobile"              // ← самое важное! Мобильный режим TradingView
+            "preset": "mobile",             // мобильный пресет — ключевой параметр!
+            "withdateranges": false
         });
 
         updatePrice();
-        setInterval(updatePrice, 10000);
+        setInterval(updatePrice, 8000);
     </script>
 </body>
 </html>

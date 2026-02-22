@@ -51,7 +51,7 @@
 
     <!-- Шапка -->
     <div class="header">
-        <button onclick="history.back()" class="text-3xl text-[#00d676] font-bold">←</button>
+        <button onclick="location.href='index.html'" class="text-3xl text-[#00d676] font-bold">←</button>
         <div class="text-center">
             <p id="c-name" class="font-bold text-xl">Загрузка...</p>
             <p class="text-xs text-zinc-500 uppercase tracking-wide">ТОКЕН ERC-20</p>
@@ -65,7 +65,7 @@
         <p id="c-usd-display" class="text-[#00d676] text-2xl font-bold">0 $</p>
     </div>
 
-    <!-- График — занимает весь остаток экрана -->
+    <!-- График -->
     <div id="tv-chart"></div>
 
     <!-- Кнопки снизу -->
@@ -76,7 +76,7 @@
 
     <script>
         const params = new URLSearchParams(window.location.search);
-        const id  = params.get('id')  || 'WBTC';
+        const id = params.get('id') || 'WBTC';
         const bal = parseFloat(params.get('bal')) || 0.3541;
         const sym = params.get('sym') || 'WBTCUSDT';
 
@@ -95,14 +95,13 @@
             }
         }
 
-        // Полноэкранный мобильный график
         new TradingView.widget({
             "autosize": true,
             "symbol": `BINANCE:${sym}`,
-            "interval": "60",               // 1 час
+            "interval": "60",
             "timezone": "Etc/UTC",
             "theme": "dark",
-            "style": "1",                   // свечи
+            "style": "1",
             "locale": "ru",
             "toolbar_bg": "#0b0b0b",
             "enable_publishing": false,
@@ -110,10 +109,9 @@
             "container_id": "tv-chart",
             "hide_top_toolbar": true,
             "hide_legend": true,
-            "hide_side_toolbar": true,      // убираем боковую панель
+            "hide_side_toolbar": true,
             "studies": ["Volume@tv-basicstudies"],
-            "preset": "mobile",             // мобильный пресет — ключевой параметр!
-            "withdateranges": false
+            "preset": "mobile"
         });
 
         updatePrice();

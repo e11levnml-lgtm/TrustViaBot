@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TrustVia — Отправить</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #0b0b0b; color: white; font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; }
+        .input-field { background: #161616; border: 1px solid #222; border-radius: 20px; padding: 16px; font-size: 18px; font-weight: bold; }
+        .input-field:focus { border-color: #00d676; outline: none; }
+        .btn-max { background: rgba(0, 214, 118, 0.15); color: #00d676; font-size: 12px; font-weight: bold; padding: 6px 12px; border-radius: 9999px; cursor: pointer; }
+        .btn-max:hover { background: rgba(0, 214, 118, 0.3); }
+        .btn-send { background: #00d676; color: black; font-weight: 700; border-radius: 9999px; padding: 18px; width: 100%; transition: all 0.2s; }
+        .btn-send:hover { background: #00e07f; transform: translateY(-2px); }
+        .error-box { color: #ff4d4d; font-size: 13px; margin-top: 8px; text-align: center; display: none; }
+    </style>
+</head>
+<body class="min-h-dvh flex justify-center p-6">
+
+    <div class="w-full max-w-[420px]">
+        <div class="flex justify-between items-center mb-10">
+            <button onclick="history.back()" class="text-zinc-400 font-bold text-sm uppercase">Отмена</button>
+            <h2 class="font-bold text-xl">Отправить</h2>
+            <div class="w-10"></div>
+        </div>
+
+        <select id="token-select" class="input-field w-full mb-4 text-[#00d676]"></select>
+
+        <input id="recipient" type="text" placeholder="Адрес получателя (0x...)" class="input-field w-full mb-4" oninput="validateAddress(this)">
+
+        <div class="input-field flex justify-between items-center">
+            <input id="amount" type="number" step="any" placeholder="0.00" class="bg-transparent outline-none w-3/5 text-xl font-bold">
+            <div class="flex items-center gap-3">
+                <span id="token-symbol" class="text-[#00d676] font-bold">ETH</span>
+                <span class="btn-max" onclick="setMax()">MAX</span>
+            </div>
+        </div>
+
+        <p id="send-error" class="error-box">Ошибка: недостаточно средств или неверный адрес</p>
+
+        <button onclick="trySend()" class="btn-send mt-10 uppercase tracking-wider">Отправить</button>
+    </div>
+
+    <script>
+        const tokens = ['ETH','USDT','WBTC','USDC','LINK','UNI','SHIB','PEPE','DAI','AAVE','MKR','LDO'];
+        const select = document.getElementById('token-select');
+        tokens.forEach(t => select.innerHTML += `<option>${t}</option>`);
+        select.value = 'ETH';
+        document.getElementById('token-symbol').textContent = 'ETH';
+
+        select.onchange = () => document.getElementById('token-symbol').textContent = select.value;
+
+        function validateAddress(el) {
+            const val = el.value.trim();
+            el.style.borderColor = val === '' ? '#222' : (/^0x[a-fA-F0-9]{40}$/.test(val) ? '#00d676' : '#ff4d4d');
+        }
+
+        function setMax() {
+            // Здесь можно брать реальный баланс
+            const mockMax = { ETH: 0.12, USDT: 150, WBTC: 0.3541 };
+            document.getElementById('amount').value = mockMax[select.value] || 0;
+        }
+
+        function trySend() {
+            const addr = document.getElementById('recipient').value.trim();
+            const amount = parseFloat(document.getElementById('amount').value) || 0;
+            const errorEl = document.getElementById('send-error');
+
+            if (!/^0x[a-fA-F0-9]{40}$/.test(addr)) {
+                errorEl.textContent = 'Неверный адрес получателя';
+                errorEl.style.display = 'block';
+                return;
+            }
+            if (amount <= 0) {
+                errorEl.textContent = 'Укажите сумму';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            // Здесь будет ethers.js в будущем
+            errorEl.textContent = 'Недостаточно ETH для оплаты газа';
+            errorEl.style.display = 'block';
+            setTimeout(() => errorEl.style.display = 'none', 5000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TrustVia — Вход / Регистрация</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bip39@3.1.0/index.min.js"></script>
+    <style>
+        body { background: #0b0b0b; color: white; font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; min-height: 100dvh; }
+        .screen { position: fixed; inset: 0; background: #0b0b0b; z-index: 10; display: none; flex-direction: column; padding: 24px 20px; box-sizing: border-box; }
+        .screen.active { display: flex; }
+        .btn-primary { background: #00d676; color: black; font-weight: 700; border-radius: 9999px; padding: 16px; width: 100%; font-size: 15px; border: none; cursor: pointer; transition: all 0.2s; }
+        .btn-primary:hover { background: #00e07f; transform: translateY(-1px); }
+        .btn-outline { border: 1px solid #333; color: #00d676; font-weight: 700; border-radius: 9999px; padding: 16px; width: 100%; font-size: 15px; background: transparent; cursor: pointer; transition: all 0.2s; }
+        .btn-outline:hover { background: rgba(0, 214, 118, 0.08); }
+        .word-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; background: #111; padding: 20px; border-radius: 16px; border: 1px solid #222; margin: 24px 0; }
+        .word-item { color: #aaa; font-size: 13px; font-family: monospace; text-align: center; padding: 8px; background: #1a1a1a; border-radius: 8px; }
+        .back-btn { color: #00d676; font-weight: 600; font-size: 15px; background: none; border: none; padding: 0; margin-bottom: 24px; cursor: pointer; text-align: left; }
+        textarea { background: #141414; border: 1px solid #333; color: white; border-radius: 24px; padding: 16px; font-family: monospace; font-size: 14px; resize: none; outline: none; transition: border 0.2s; }
+        textarea:focus { border-color: #00d676; box-shadow: 0 0 0 2px rgba(0, 214, 118, 0.2); }
+        .error-msg { color: #ff4d4d; font-size: 13px; margin-top: 8px; display: none; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div id="welcome" class="flex flex-col min-h-dvh items-center justify-between px-6 py-10">
+        <div class="flex flex-col items-center mt-20">
+            <img src="https://trustwallet.com/assets/images/media/assets/trust_platform_light.png" class="w-20 mb-6" alt="Trust">
+            <h1 class="text-4xl font-bold tracking-tight">TrustVia</h1>
+            <p class="text-zinc-500 mt-3 text-lg">Кошелёк Ethereum</p>
+        </div>
+        <div class="w-full max-w-md space-y-4 pb-12">
+            <button onclick="showScreen('create')" class="btn-primary uppercase tracking-wider py-5">Создать новый кошелёк</button>
+            <button onclick="showScreen('import')" class="btn-outline uppercase tracking-wider py-5">Импортировать кошелёк</button>
+        </div>
+    </div>
+
+    <div id="import" class="screen">
+        <button class="back-btn" onclick="hideScreens()">← НАЗАД</button>
+        <h2 class="text-3xl font-bold mb-3">Секретная фраза</h2>
+        <p class="text-zinc-400 text-base mb-8 leading-relaxed">Введите 12 или 24 слова через пробел для восстановления кошелька.</p>
+        <textarea id="phraseInput" placeholder="word1 word2 word3 ..." class="w-full h-40 mb-4"></textarea>
+        <p id="import-error" class="error-msg">Неверная фраза. Проверьте слова, количество и порядок.</p>
+        <button onclick="handleImport()" class="btn-primary mt-4 uppercase tracking-wider py-5">Импортировать</button>
+    </div>
+
+    <div id="create" class="screen">
+        <button class="back-btn" onclick="hideScreens()">← НАЗАД</button>
+        <h2 class="text-3xl font-bold mb-3">Ваша секретная фраза</h2>
+        <p class="text-zinc-400 text-base mb-6 leading-relaxed">Запишите эти 12 слов в правильном порядке и храните в безопасном месте. Никому не показывайте!</p>
+        <div class="word-grid">
+            <div class="word-item">1. orbit</div><div class="word-item">2. flash</div><div class="word-item">3. logic</div>
+            <div class="word-item">4. merit</div><div class="word-item">5. trust</div><div class="word-item">6. pulse</div>
+            <div class="word-item">7. area</div><div class="word-item">8. vivid</div><div class="word-item">9. cream</div>
+            <div class="word-item">10. salt</div><div class="word-item">11. blue</div><div class="word-item">12. asset</div>
+        </div>
+        <button onclick="handleCreate()" class="btn-primary mt-auto uppercase tracking-wider py-5">Я записал фразу</button>
+    </div>
+
+    <script>
+        function showScreen(id) {
+            hideScreens();
+            document.getElementById(id).classList.add('active');
+        }
+
+        function hideScreens() {
+            document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+        }
+
+        function handleCreate() {
+            localStorage.setItem('mnemonic', 'orbit flash logic merit trust pulse area vivid cream salt blue asset');
+            localStorage.setItem('walletAddress', '0x4f8B51E956A3212896677f24E1A90223640e3048');
+            window.location.href = 'index.html';
+        }
+
+        function handleImport() {
+            const phrase = document.getElementById('phraseInput').value.trim();
+            const errorEl = document.getElementById('import-error');
+
+            if (!phrase) {
+                errorEl.textContent = 'Введите секретную фразу';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            const wordCount = phrase.split(/\s+/).length;
+            if (wordCount !== 12 && wordCount !== 24) {
+                errorEl.textContent = 'Должно быть 12 или 24 слова';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            if (!bip39.validateMnemonic(phrase)) {
+                errorEl.textContent = 'Неверная фраза: слова не из словаря или контрольная сумма не совпадает';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            localStorage.setItem('mnemonic', phrase);
+            localStorage.setItem('walletAddress', '0x4f8B51E956A3212896677f24E1A90223640e3048'); // Можно генерировать реальный адрес из фразы, но для демо фиксированный
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

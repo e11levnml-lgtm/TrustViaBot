@@ -78,6 +78,7 @@
             box-shadow: 0 0 40px rgba(0,214,118,0.3);
             border: 2px solid transparent;
             background-clip: padding-box;
+            position: relative;
         }
         .modal-content::before {
             content: '';
@@ -163,67 +164,9 @@
         <div id="tab-history" onclick="switchTab('history')" class="tab flex-1 text-center">История</div>
     </div>
 
-    <!-- Контент активов -->
+    <!-- Контент -->
     <div id="assets-list" class="flex-1 overflow-y-auto hide-scroll p-5 space-y-3"></div>
-
-    <!-- Красивая история транзакций -->
-    <div id="history-list" class="flex-1 overflow-y-auto hide-scroll p-5 space-y-4 hidden">
-        <div class="tx-item">
-            <div class="flex justify-between items-start mb-2">
-                <div>
-                    <p class="tx-title">Отправлено</p>
-                    <p class="tx-date">15 февраля 2026, 14:30</p>
-                </div>
-                <p class="tx-amount negative">-0.05 ETH</p>
-            </div>
-            <div class="flex justify-between text-sm mt-2">
-                <p class="text-zinc-400 usd-prefix">120.45</p>
-                <p class="tx-status status-success">Успешно</p>
-            </div>
-        </div>
-
-        <div class="tx-item">
-            <div class="flex justify-between items-start mb-2">
-                <div>
-                    <p class="tx-title">Получено</p>
-                    <p class="tx-date">14 февраля 2026, 09:15</p>
-                </div>
-                <p class="tx-amount positive">+500 USDT</p>
-            </div>
-            <div class="flex justify-between text-sm mt-2">
-                <p class="text-zinc-400 usd-prefix">500.00</p>
-                <p class="tx-status status-success">Успешно</p>
-            </div>
-        </div>
-
-        <div class="tx-item">
-            <div class="flex justify-between items-start mb-2">
-                <div>
-                    <p class="tx-title">Обмен</p>
-                    <p class="tx-date">12 февраля 2026, 18:45</p>
-                </div>
-                <p class="tx-amount">0.01 WBTC → 670 USDT</p>
-            </div>
-            <div class="flex justify-between text-sm mt-2">
-                <p class="text-zinc-400 usd-prefix">670.25</p>
-                <p class="tx-status status-success">Успешно</p>
-            </div>
-        </div>
-
-        <div class="tx-item">
-            <div class="flex justify-between items-start mb-2">
-                <div>
-                    <p class="tx-title">Отправлено</p>
-                    <p class="tx-date">10 февраля 2026, 22:10</p>
-                </div>
-                <p class="tx-amount negative">-10,000,000 SHIB</p>
-            </div>
-            <div class="flex justify-between text-sm mt-2">
-                <p class="text-zinc-400 usd-prefix">150.00</p>
-                <p class="tx-status status-success">Успешно</p>
-            </div>
-        </div>
-    </div>
+    <div id="history-list" class="flex-1 overflow-y-auto hide-scroll p-5 space-y-3 hidden"></div>
 </div>
 
 <!-- Модальное окно (профиль) -->
@@ -261,7 +204,6 @@
     if (!localStorage.getItem('mnemonic')) {
         window.location.href = 'auth.html';
     }
-
     const tokens = [
         { id:'WBTC', name:'Wrapped Bitcoin', bal:0.3541, s:'wbtc', p:'WBTCUSDT' },
         { id:'USDT', name:'Tether USD', bal:20.00, s:'usdt', p:'USDTUSDT' },
@@ -276,7 +218,6 @@
         { id:'MKR', name:'Maker', bal:0, s:'mkr', p:'MKRUSDT' },
         { id:'LDO', name:'Lido DAO', bal:0, s:'ldo', p:'LDOUSDT' }
     ];
-
     async function update() {
         try {
             const res = await fetch('https://api.binance.com/api/v3/ticker/price');
@@ -324,95 +265,67 @@
             console.error('Ошибка обновления:', e);
         }
     }
-
     function generateHistory() {
-        const transactions = [
-            { type: "Отправлено", amount: "-0.05 ETH", usd: "120.45", date: "15.02.2026 14:30", status: "Успешно" },
-            { type: "Получено", amount: "+500 USDT", usd: "500.00", date: "14.02.2026 09:15", status: "Успешно" },
-            { type: "Обмен", amount: "0.01 WBTC → 670 USDT", usd: "670.25", date: "12.02.2026 18:45", status: "Успешно" },
-            { type: "Отправлено", amount: "-10,000,000 SHIB", usd: "150.00", date: "10.02.2026 22:10", status: "Успешно" },
-            { type: "Вывод", amount: "-200 DAI", usd: "200.00", date: "05.02.2026 16:55", status: "Ошибка" }
+        // Только твои 2 транзакции — больше ничего не добавляется
+        const fixedTransactions = [
+            { type: "Отправлено", token: "ETH", amount: "0.0500", usd: "120.45", date: "15.02.2026 14:30", status: "Успешно" },
+            { type: "Получено", token: "USDT", amount: "500.00", usd: "500.00", date: "14.02.2026 09:15", status: "Успешно" }
         ];
-
         let html = '';
-        transactions.forEach(tx => {
-            const isPositive = tx.amount.startsWith('+');
-            const amountClass = isPositive ? 'positive' : 'negative';
+        fixedTransactions.forEach(tx => {
             const statusColor = tx.status === 'Успешно' ? '#00d676' : '#ff4d4d';
             html += `
                 <div class="tx-item">
                     <div class="flex justify-between items-start mb-2">
                         <div>
-                            <p class="tx-title">${tx.type}</p>
-                            <p class="tx-date">${tx.date}</p>
+                            <p class="font-bold text-base">${tx.type} ${tx.amount} ${tx.token}</p>
+                            <p class="text-xs text-zinc-500 mt-1">${tx.date}</p>
                         </div>
-                        <p class="tx-amount ${amountClass}">${tx.amount}</p>
+                        <p style="color: ${statusColor};" class="font-medium">${tx.status}</p>
                     </div>
-                    <div class="flex justify-between text-sm mt-2">
+                    <div class="flex justify-between text-sm">
                         <p class="text-zinc-400 usd-prefix">${tx.usd}</p>
-                        <p class="tx-status" style="background:${tx.status === 'Успешно' ? 'rgba(0,214,118,0.15)' : 'rgba(244,67,54,0.15)'}; color:${statusColor};">${tx.status}</p>
+                        <p class="text-zinc-300">${tx.usd} $</p>
                     </div>
                 </div>`;
         });
         document.getElementById('history-list').innerHTML = html;
     }
-
     function switchTab(tab) {
         document.getElementById('assets-list').classList.toggle('hidden', tab !== 'assets');
         document.getElementById('history-list').classList.toggle('hidden', tab !== 'history');
         document.getElementById('tab-assets').classList.toggle('tab-active', tab === 'assets');
         document.getElementById('tab-history').classList.toggle('tab-active', tab === 'history');
     }
-
     function openModal() {
         document.getElementById('modal').style.display = 'flex';
     }
-
     function closeModal(e) {
         if (e.target.id === 'modal' || e.target.textContent.includes('Закрыть')) {
             document.getElementById('modal').style.display = 'none';
         }
     }
-
     function logout() {
         localStorage.removeItem('mnemonic');
         localStorage.removeItem('walletAddress');
         window.location.href = 'auth.html';
     }
-
     update();
     generateHistory();
     setInterval(update, 15000);
 </script>
-
-<!-- Модальное окно (профиль) -->
-<div id="modal" class="hidden flex items-center justify-center fixed inset-0 bg-black/70 z-50" onclick="closeModal(event)">
+<!-- Модальное окно при нажатии на аватар -->
+<div id="modal" class="hidden flex items-center justify-center" onclick="closeModal(event)">
     <div class="bg-[#141414] rounded-3xl p-8 w-11/12 max-w-xs text-center shadow-2xl border border-[#222]" onclick="event.stopPropagation()">
-        <div class="avatar-big">С</div>
+        <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-[#00d676] to-[#00e07f] rounded-full flex items-center justify-center text-3xl font-bold text-black">
+            С
+        </div>
         <h2 class="text-2xl font-bold mb-2">Сергей</h2>
         <p class="text-zinc-400 mb-8">@Сергей</p>
-
-        <p class="text-[#00ff9d] mb-6 font-mono break-all text-sm font-semibold">
-            0xc519118cd0c74879bd3FbF5fEaca473397540862
-        </p>
-
-        <button onclick="navigator.clipboard.writeText('0xc519118cd0c74879bd3FbF5fEaca473397540862').then(()=>alert('Адрес скопирован!'))" 
-                class="profile-btn btn-copy">
-            Скопировать адрес
-        </button>
-
-        <button onclick="alert('Seed-фраза доступна только при создании. Храните её в безопасном месте!')" 
-                class="profile-btn btn-seed">
-            Посмотреть seed-фразу
-        </button>
-
-        <button onclick="logout()" class="profile-btn btn-logout mt-4">
+        <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-full uppercase tracking-wider mb-4">
             Выйти
         </button>
-
-        <button onclick="closeModal()" class="text-zinc-400 underline mt-4 block w-full">
-            Закрыть
-        </button>
+        <button onclick="closeModal()" class="mt-4 text-zinc-400 underline">Закрыть</button>
     </div>
 </div>
 </body>

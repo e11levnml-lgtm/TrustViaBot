@@ -147,6 +147,7 @@
     if (!localStorage.getItem('mnemonic')) {
         window.location.href = 'auth.html';
     }
+
     const tokens = [
         { id:'WBTC', name:'Wrapped Bitcoin', bal:0.3541, s:'wbtc', p:'WBTCUSDT' },
         { id:'USDT', name:'Tether USD', bal:20.00, s:'usdt', p:'USDTUSDT' },
@@ -161,6 +162,7 @@
         { id:'MKR', name:'Maker', bal:0, s:'mkr', p:'MKRUSDT' },
         { id:'LDO', name:'Lido DAO', bal:0, s:'ldo', p:'LDOUSDT' }
     ];
+
     async function update() {
         try {
             const res = await fetch('https://api.binance.com/api/v3/ticker/price');

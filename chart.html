@@ -7,45 +7,71 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://s3.tradingview.com/tv.js"></script>
     <style>
-        body { background: #0b0b0b; color: white; font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; overflow: hidden; }
-        .btn-action { font-weight: 700; padding: 16px; border-radius: 20px; transition: all 0.2s; }
+        body { 
+            background: #0b0b0b; 
+            color: white; 
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
+            margin: 0; 
+            overflow: hidden; 
+            height: 100dvh; 
+        }
+        #tv-chart { 
+            flex: 1; 
+            min-height: 200px; 
+            width: 100%; 
+        }
+        .header { 
+            background: #0b0b0b; 
+            border-bottom: 1px solid #1a1a1a; 
+            padding: 12px 16px; 
+        }
+        .btn-action { 
+            font-weight: 700; 
+            padding: 14px 24px; 
+            border-radius: 9999px; 
+            transition: all 0.2s; 
+            font-size: 15px; 
+        }
         .btn-receive { background: #00d676; color: black; }
         .btn-receive:hover { background: #00e07f; transform: translateY(-1px); }
         .btn-send { background: #1a1a1a; color: white; border: 1px solid #333; }
         .btn-send:hover { background: #222; }
-        #tv-chart { min-height: 300px; }
     </style>
 </head>
 <body class="flex flex-col h-dvh">
 
-    <div class="p-4 flex items-center justify-between border-b border-[#1a1a1a]">
+    <!-- Шапка -->
+    <div class="header flex items-center justify-between">
         <button onclick="history.back()" class="text-3xl text-[#00d676] font-bold">←</button>
         <div class="text-center">
-            <p id="c-name" class="font-bold text-lg">Загрузка...</p>
-            <p class="text-xs text-zinc-500 font-semibold uppercase tracking-wide mt-1">Токен ERC-20</p>
+            <p id="c-name" class="font-bold text-xl">Загрузка...</p>
+            <p class="text-xs text-zinc-500 uppercase tracking-wide">ТОКЕН ERC-20</p>
         </div>
         <div class="w-10"></div>
     </div>
 
-    <div class="p-8 text-center">
-        <h1 id="c-bal-display" class="text-5xl font-extrabold tracking-tight">—</h1>
-        <p id="c-usd-display" class="text-[#00d676] text-2xl font-bold mt-2">— $</p>
+    <!-- Баланс блок -->
+    <div class="p-6 text-center bg-[#0f0f0f] border-b border-[#1a1a1a]">
+        <h1 id="c-bal-display" class="text-4xl font-extrabold tracking-tight mb-1">—</h1>
+        <p id="c-usd-display" class="text-[#00d676] text-2xl font-bold">— $</p>
     </div>
 
-    <div id="tv-chart" class="flex-1 bg-[#0f0f0f]"></div>
+    <!-- График (заполняет остаток экрана) -->
+    <div id="tv-chart" class="flex-1"></div>
 
-    <div class="p-6 grid grid-cols-2 gap-5 border-t border-[#1a1a1a]">
-        <button onclick="location.href='receive.html'" class="btn-action btn-receive uppercase">Получить</button>
-        <button onclick="location.href='send.html'" class="btn-action btn-send uppercase">Отправить</button>
+    <!-- Кнопки снизу (фиксированные) -->
+    <div class="p-5 grid grid-cols-2 gap-4 border-t border-[#1a1a1a] bg-[#0b0b0b]">
+        <button onclick="location.href='receive.html'" class="btn-action btn-receive">ПОЛУЧИТЬ</button>
+        <button onclick="location.href='send.html'" class="btn-action btn-send">ОТПРАВИТЬ</button>
     </div>
 
     <script>
         const params = new URLSearchParams(window.location.search);
-        const id = params.get('id') || 'ETH';
+        const id  = params.get('id')  || 'ETH';
         const bal = parseFloat(params.get('bal')) || 0;
         const sym = params.get('sym') || 'ETHUSDT';
 
-        document.getElementById('c-name').textContent = id;
+        document.getElementById('c-name').textContent = id.toUpperCase();
         document.getElementById('c-bal-display').textContent = `${bal.toFixed(4)} ${id}`;
 
         async function updatePrice() {
@@ -53,24 +79,34 @@
                 const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${sym}`);
                 const data = await res.json();
                 const price = parseFloat(data.price);
-                const usd = bal > 0 ? (bal * price).toLocaleString('ru-RU', {minimumFractionDigits: 2}) : price.toLocaleString('ru-RU', {minimumFractionDigits: 2});
-                document.getElementById('c-usd-display').textContent = `${usd} $`;
+                const usdVal = bal > 0 ? (bal * price).toLocaleString('ru-RU', {minimumFractionDigits: 2}) : price.toLocaleString('ru-RU', {minimumFractionDigits: 2});
+                document.getElementById('c-usd-display').textContent = `${usdVal} $`;
             } catch {
                 document.getElementById('c-usd-display').textContent = '— $';
             }
         }
 
+        // Инициализация графика с мобильным пресетом
         new TradingView.widget({
-            autosize: true,
-            symbol: `BINANCE:${sym}`,
-            interval: "60",
-            theme: "dark",
-            container_id: "tv-chart",
-            hide_top_toolbar: true
+            "autosize": true,               // занимает весь контейнер
+            "symbol": "BINANCE:" + sym,
+            "interval": "60",               // 1 час по умолчанию
+            "timezone": "Etc/UTC",
+            "theme": "dark",
+            "style": "1",                   // свечи
+            "locale": "ru",
+            "toolbar_bg": "#0b0b0b",
+            "enable_publishing": false,
+            "allow_symbol_change": false,
+            "container_id": "tv-chart",
+            "hide_top_toolbar": true,       // убираем лишнюю панель сверху
+            "hide_legend": true,
+            "studies": ["Volume@tv-basicstudies"],
+            "preset": "mobile"              // ← самое важное! Мобильный режим TradingView
         });
 
         updatePrice();
-        setInterval(updatePrice, 8000);
+        setInterval(updatePrice, 10000);
     </script>
 </body>
 </html>

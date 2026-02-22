@@ -3,36 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Получить</title>
+    <title>TrustVia — Получить</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #0b0b0b; color: white; margin: 0; min-height: 100dvh; padding: 16px; font-family: sans-serif; text-align: center; }
-        .qr { background: white; padding: 16px; border-radius: 24px; margin: 20px auto; width: 220px; }
-        .address { background: #141414; border: 1px solid #333; border-radius: 16px; padding: 16px; margin: 20px auto; max-width: 320px; word-break: break-all; font-family: monospace; cursor: pointer; }
-        .address:active { background: #1a1a1a; }
-        .back { color: #00d676; font-size: 1.5rem; margin-bottom: 20px; cursor: pointer; }
+        body { background: #0b0b0b; color: white; font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; min-height: 100dvh; }
+        .qr-box { background: #fff; padding: 20px; border-radius: 40px; box-shadow: 0 0 30px rgba(0, 214, 118, 0.2); margin: 20px 0; }
+        .address-card { background: #141414; border: 1px solid #222; border-radius: 24px; padding: 16px; text-align: center; cursor: pointer; transition: border 0.2s; }
+        .address-card:hover { border-color: #00d676; }
+        .btn-share { background: #1a1a1a; color: white; font-weight: 700; border-radius: 9999px; padding: 16px; width: 100%; border: 1px solid #333; transition: all 0.2s; }
+        .btn-share:hover { background: #222; }
+        .toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); background: #00d676; color: black; padding: 12px 24px; border-radius: 9999px; font-weight: bold; opacity: 0; transition: opacity 0.3s; }
     </style>
 </head>
-<body>
+<body class="flex flex-col items-center p-6">
 
-    <div class="back" onclick="location.href='index.html'">← Назад</div>
-    <h1>Получить</h1>
-
-    <div class="qr">
-        <img id="qr" src="" alt="QR" width="200">
+    <div class="w-full flex justify-between items-center mb-8">
+        <button onclick="history.back()" class="text-[#00d676] text-3xl font-bold">←</button>
+        <h2 class="font-bold text-xl uppercase tracking-wide">Получить</h2>
+        <div class="w-10"></div>
     </div>
 
-    <div class="address" onclick="copy()">
-        <div id="addr"></div>
+    <div class="text-center mb-6">
+        <p class="text-zinc-400 text-base">Сеть: Ethereum (ERC-20)</p>
     </div>
+
+    <div class="qr-box">
+        <img id="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=0x4f8B51E956A3212896677f24E1A90223640e3048" class="w-48 h-48 mx-auto">
+    </div>
+
+    <div id="address-card" class="address-card w-full max-w-md mb-6" onclick="copyAddress()">
+        <p class="text-xs text-zinc-500 font-bold uppercase mb-2">Ваш адрес</p>
+        <p id="address-text" class="text-sm font-mono break-all">0x4f8B51E956A3212896677f24E1A90223640e3048</p>
+    </div>
+
+    <button onclick="shareAddress()" class="btn-share uppercase tracking-wider">Поделиться адресом</button>
+
+    <div id="toast" class="toast hidden">Скопировано в буфер!</div>
 
     <script>
-        const addr = localStorage.getItem('walletAddress') || '0xc519118cd0c74879bd3FbF5fEaca473397540862';
-        document.getElementById('addr').textContent = addr;
-        document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(addr)}`;
+        const address = localStorage.getItem('walletAddress') || '0x4f8B51E956A3212896677f24E1A90223640e3048';
+        document.getElementById('address-text').textContent = address;
+        document.getElementById('qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(address)}`;
 
-        function copy() {
-            navigator.clipboard.writeText(addr).then(() => alert('Адрес скопирован!'));
+        async function copyAddress() {
+            try {
+                await navigator.clipboard.writeText(address);
+                const toast = document.getElementById('toast');
+                toast.style.opacity = '1';
+                toast.classList.remove('hidden');
+                setTimeout(() => toast.style.opacity = '0', 2000);
+            } catch {
+                const toast = document.getElementById('toast');
+                toast.textContent = 'Ошибка копирования';
+                toast.style.background = '#ff4d4d';
+                toast.style.opacity = '1';
+                toast.classList.remove('hidden');
+                setTimeout(() => toast.style.opacity = '0', 2000);
+            }
+        }
+
+        async function shareAddress() {
+            if (navigator.share) {
+                await navigator.share({ title: 'Мой адрес TrustVia', text: `Получите на Ethereum: ${address}` });
+            } else {
+                copyAddress();
+            }
         }
     </script>
 </body>

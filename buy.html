@@ -32,7 +32,7 @@
 
     <!-- Header -->
     <div class="flex items-center gap-4 mb-8">
-        <button onclick="history.back()" class="text-[#00d676] text-4xl font-bold">←</button>
+        <button onclick="location.href='index.html'" class="text-[#00d676] text-4xl font-bold">←</button>
         <h2 class="font-bold text-lg tracking-wide">Получить актив (ERC-20)</h2>
     </div>
 
@@ -41,30 +41,27 @@
 
     <script>
         const tokens = [
-            // Стаблкоины сверху
-            { id: 'USDT', name: 'Tether USD',      icon: 'usdt', sym: 'USDTUSDT' },
-            { id: 'USDC', name: 'USD Coin',        icon: 'usdc', sym: 'USDCUSDT' },
-            { id: 'DAI',  name: 'Dai',             icon: 'dai',  sym: 'DAIUSDT'  },
-            // Основные
-            { id: 'ETH',  name: 'Ethereum',        icon: 'eth',  sym: 'ETHUSDT'  },
+            { id: 'USDT', name: 'Tether USD', icon: 'usdt', sym: 'USDTUSDT' },
+            { id: 'USDC', name: 'USD Coin', icon: 'usdc', sym: 'USDCUSDT' },
+            { id: 'DAI', name: 'Dai', icon: 'dai', sym: 'DAIUSDT' },
+            { id: 'ETH', name: 'Ethereum', icon: 'eth', sym: 'ETHUSDT' },
             { id: 'WBTC', name: 'Wrapped Bitcoin', icon: 'wbtc', sym: 'WBTCUSDT' },
-            { id: 'MATIC',name: 'Polygon',         icon: 'matic',sym: 'MATICUSDT'},
-            { id: 'ARB',  name: 'Arbitrum',        icon: 'arb',  sym: 'ARBUSDT'  },
-            // Популярные DeFi / Memes
-            { id: 'LINK', name: 'Chainlink',       icon: 'link', sym: 'LINKUSDT' },
-            { id: 'UNI',  name: 'Uniswap',         icon: 'uni',  sym: 'UNIUSDT'  },
-            { id: 'AAVE', name: 'Aave',            icon: 'aave', sym: 'AAVEUSDT' },
-            { id: 'MKR',  name: 'Maker',           icon: 'mkr',  sym: 'MKRUSDT'  },
-            { id: 'LDO',  name: 'Lido DAO',        icon: 'ldo',  sym: 'LDOUSDT'  },
-            { id: 'PEPE', name: 'Pepe',            icon: 'pepe', sym: 'PEPEUSDT' },
-            { id: 'SHIB', name: 'Shiba Inu',       icon: 'shib', sym: 'SHIBUSDT' }
+            { id: 'MATIC', name: 'Polygon', icon: 'matic', sym: 'MATICUSDT' },
+            { id: 'ARB', name: 'Arbitrum', icon: 'arb', sym: 'ARBUSDT' },
+            { id: 'LINK', name: 'Chainlink', icon: 'link', sym: 'LINKUSDT' },
+            { id: 'UNI', name: 'Uniswap', icon: 'uni', sym: 'UNIUSDT' },
+            { id: 'AAVE', name: 'Aave', icon: 'aave', sym: 'AAVEUSDT' },
+            { id: 'MKR', name: 'Maker', icon: 'mkr', sym: 'MKRUSDT' },
+            { id: 'LDO', name: 'Lido DAO', icon: 'ldo', sym: 'LDOUSDT' },
+            { id: 'PEPE', name: 'Pepe', icon: 'pepe', sym: 'PEPEUSDT' },
+            { id: 'SHIB', name: 'Shiba Inu', icon: 'shib', sym: 'SHIBUSDT' }
         ];
 
         const listEl = document.getElementById('list');
 
         tokens.forEach(t => {
             listEl.innerHTML += `
-                <div onclick="window.location.href='chart.html?id=${t.id}&bal=0&sym=${t.sym}&icon=${t.icon}'" 
+                <div onclick="location.href='chart.html?id=${t.id}&bal=0&sym=${t.sym}&icon=${t.icon}'" 
                      class="token-item flex items-center gap-4 p-5 bg-[#141414] rounded-3xl border border-[#1d1d1d] cursor-pointer">
                     <img src="https://assets.coincap.io/assets/icons/${t.icon}@2x.png" 
                          onerror="this.src='https://via.placeholder.com/40?text=${t.id}'"

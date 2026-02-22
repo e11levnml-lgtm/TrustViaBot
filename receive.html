@@ -33,7 +33,7 @@
 
     <div id="address-card" class="address-card w-full max-w-md mb-6" onclick="copyAddress()">
         <p class="text-xs text-zinc-500 font-bold uppercase mb-2">Ваш адрес</p>
-        <p id="address-text" class="text-sm font-mono break-all">0x4f8B51E956A3212896677f24E1A90223640e3048</p>
+        <p id="address-text" class="text-sm font-mono break-all">0xc519118cd0c74879bd3FbF5fEaca473397540862</p>
     </div>
 
     <button onclick="shareAddress()" class="btn-share uppercase tracking-wider">Поделиться адресом</button>
@@ -41,7 +41,7 @@
     <div id="toast" class="toast hidden">Скопировано в буфер!</div>
 
     <script>
-        const address = localStorage.getItem('walletAddress') || '0x4f8B51E956A3212896677f24E1A90223640e3048';
+        const address = localStorage.getItem('walletAddress') || '0xc519118cd0c74879bd3FbF5fEaca473397540862';
         document.getElementById('address-text').textContent = address;
         document.getElementById('qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(address)}`;
 
@@ -71,4 +71,5 @@
         }
     </script>
 </body>
+
 </html>

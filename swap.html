@@ -2,137 +2,59 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Обмен</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #0b0b0b; color: white; font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; min-height: 100dvh; }
-        .swap-card { background: #161616; border: 1px solid #222; border-radius: 24px; padding: 20px; }
-        .arrow-down { background: #0b0b0b; border: 1px solid #222; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #00d676; font-size: 28px; margin: -22px auto; z-index: 10; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        .btn-swap { background: #00d676; color: black; font-weight: 700; border-radius: 9999px; padding: 18px; width: 100%; transition: all 0.2s; }
-        .btn-swap:active { transform: scale(0.97); }
-        .error-box { color: #ff4d4d; font-size: 13px; margin-top: 8px; text-align: center; padding: 12px; background: rgba(255, 77, 77, 0.1); border: 1px solid #ff4d4d; border-radius: 12px; display: none; }
+        body { background: #0b0b0b; color: white; margin: 0; min-height: 100dvh; padding: 16px; font-family: sans-serif; }
+        .card { background: #141414; border: 1px solid #333; border-radius: 16px; padding: 16px; margin: 12px 0; }
+        .arrow { text-align: center; font-size: 2.5rem; color: #00d676; margin: -20px 0; }
+        input, select { background: #1a1a1a; border: 1px solid #444; color: white; padding: 12px; border-radius: 12px; width: 100%; margin: 8px 0; font-size: 1.2rem; }
+        button { background: #00d676; color: black; font-weight: bold; padding: 16px; border-radius: 9999px; width: 100%; margin-top: 20px; cursor: pointer; }
+        button:active { transform: scale(0.97); }
+        .back { color: #00d676; font-size: 1.5rem; margin-bottom: 20px; cursor: pointer; }
     </style>
 </head>
-<body class="flex justify-center p-6">
+<body>
 
-    <div class="w-full max-w-[420px]">
-        <div class="flex items-center gap-4 mb-10">
-            <button onclick="location.href='index.html'" class="text-[#00d676] text-3xl font-bold">←</button>
-            <h2 class="font-bold text-xl uppercase">Обмен</h2>
-        </div>
+    <div class="back" onclick="location.href='index.html'">← Назад</div>
+    <h1 style="text-align:center;">Обмен</h1>
 
-        <div class="space-y-2 relative">
-            <div class="swap-card">
-                <p class="text-xs text-zinc-500 font-bold uppercase mb-3">Вы отдаёте</p>
-                <div class="flex justify-between items-center">
-                    <input id="from-amount" type="number" value="0.00" class="bg-transparent text-3xl font-bold outline-none w-3/5" placeholder="0.00" oninput="updateOutput()">
-                    <select id="from-token" class="bg-transparent text-[#00d676] text-xl font-bold" onchange="updateOutput()">
-                        <option>ETH</option>
-                        <option>USDT</option>
-                        <option>WBTC</option>
-                        <option>USDC</option>
-                        <option>LINK</option>
-                        <option>UNI</option>
-                        <option>SHIB</option>
-                        <option>PEPE</option>
-                        <option>DAI</option>
-                        <option>AAVE</option>
-                        <option>MKR</option>
-                        <option>LDO</option>
-                    </select>
-                </div>
-                <p class="text-xs text-zinc-500 mt-2">Баланс: <span id="from-balance">0.1200 ETH</span></p>
-            </div>
-
-            <div class="arrow-down">↓</div>
-
-            <div class="swap-card">
-                <p class="text-xs text-zinc-500 font-bold uppercase mb-3">Вы получаете (примерно)</p>
-                <div class="flex justify-between items-center">
-                    <span id="to-amount" class="text-3xl font-bold text-zinc-300">0.00</span>
-                    <select id="to-token" class="bg-transparent text-zinc-300 text-xl font-bold" onchange="updateOutput()">
-                        <option>USDT</option>
-                        <option>ETH</option>
-                        <option>WBTC</option>
-                        <option>USDC</option>
-                        <option>LINK</option>
-                        <option>UNI</option>
-                        <option>SHIB</option>
-                        <option>PEPE</option>
-                        <option>DAI</option>
-                        <option>AAVE</option>
-                        <option>MKR</option>
-                        <option>LDO</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <div id="swap-error" class="error-box mt-4"></div>
-        <button onclick="handleSwap()" class="btn-swap mt-10 uppercase tracking-wider">Обменять</button>
+    <div class="card">
+        <p style="color:#aaa; margin-bottom:8px;">Отдаёте</p>
+        <select id="from">
+            <option>ETH</option>
+            <option>USDT</option>
+            <option>WBTC</option>
+        </select>
+        <input id="amt-from" type="number" placeholder="0.00">
     </div>
 
+    <div class="arrow">↓</div>
+
+    <div class="card">
+        <p style="color:#aaa; margin-bottom:8px;">Получаете</p>
+        <select id="to">
+            <option>USDT</option>
+            <option>ETH</option>
+            <option>WBTC</option>
+        </select>
+        <input id="amt-to" type="number" placeholder="0.00" disabled>
+    </div>
+
+    <button onclick="swap()">Обменять</button>
+
     <script>
-        const fromAmount = document.getElementById('from-amount');
-        const fromToken = document.getElementById('from-token');
-        const toToken = document.getElementById('to-token');
-        const toAmount = document.getElementById('to-amount');
-        const errorBox = document.getElementById('swap-error');
-        const fromBalance = document.getElementById('from-balance');
-
-        // Демо балансы
-        const balances = { ETH: 0.12, USDT: 20000, WBTC: 0.3541, USDC: 0, LINK: 0, UNI: 0, SHIB: 0, PEPE: 0, DAI: 0, AAVE: 0, MKR: 0, LDO: 0 };
-
-        function updateOutput() {
-            const amount = parseFloat(fromAmount.value) || 0;
-            const from = fromToken.value;
-            const to = toToken.value;
-
-            fromBalance.textContent = `${balances[from].toLocaleString('ru-RU')} ${from}`;
-
-            if (amount > 0) {
-                // Демо курс 1:3300 для ETH→USDT, остальные 1:1
-                let rate = (from === 'ETH' && to === 'USDT') ? 3300 : 1;
-                let output = amount * rate * 0.995; // 0.5% сбор
-                toAmount.textContent = output.toFixed(4);
-            } else {
-                toAmount.textContent = '0.00';
-            }
+        function swap() {
+            const amt = document.getElementById('amt-from').value;
+            if (!amt || amt <= 0) return alert('Введи сумму');
+            alert('Обмен выполнен (демо)');
         }
 
-        function handleSwap() {
-            const amount = parseFloat(fromAmount.value) || 0;
-            const from = fromToken.value;
-            const to = toToken.value;
-
-            if (amount <= 0) {
-                errorBox.textContent = 'Укажите сумму для обмена';
-                errorBox.style.display = 'block';
-                return;
-            }
-            if (from === to) {
-                errorBox.textContent = 'Выберите разные токены';
-                errorBox.style.display = 'block';
-                return;
-            }
-            if (amount > balances[from]) {
-                errorBox.textContent = `Недостаточно ${from} на балансе`;
-                errorBox.style.display = 'block';
-                return;
-            }
-
-            errorBox.textContent = `Обмен выполнен (демо): ${amount} ${from} → ${(amount * 0.995).toFixed(4)} ${to}`;
-            errorBox.style.color = '#00d676';
-            errorBox.style.border = '1px solid #00d676';
-            errorBox.style.background = 'rgba(0,214,118,0.1)';
-            errorBox.style.display = 'block';
-            setTimeout(() => errorBox.style.display = 'none', 4000);
-        }
-
-        fromAmount.oninput = updateOutput;
-        fromToken.onchange = updateOutput;
-        toToken.onchange = updateOutput;
-        updateOutput();
+        document.getElementById('amt-from').oninput = () => {
+            const amt = document.getElementById('amt-from').value;
+            document.getElementById('amt-to').value = (amt * 3300).toFixed(2); // демо курс ETH→USDT
+        };
     </script>
 </body>
 </html>

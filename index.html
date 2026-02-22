@@ -158,7 +158,7 @@
         <div id="tab-history" onclick="switchTab('history')" class="tab flex-1 text-center">История</div>
     </div>
 
-    <!-- Контент -->
+    <!-- Контент активов -->
     <div id="assets-list" class="flex-1 overflow-y-auto hide-scroll p-5 space-y-3"></div>
 
     <!-- Красивая история транзакций -->
@@ -205,46 +205,32 @@
             </div>
         </div>
 
-        <div class="tx-item">
-            <div class="flex justify-between items-start mb-2">
-                <div>
-                    <p class="tx-title">Отправлено</p>
-                    <p class="tx-date">10 февраля 2026, 22:10</p>
-                </div>
-                <p class="tx-amount negative">-10,000,000 SHIB</p>
-            </div>
-            <div class="flex justify-between text-sm mt-2">
-                <p class="text-zinc-400">~$150.00</p>
-                <p class="tx-status status-success">Успешно</p>
-            </div>
-        </div>
-
         <!-- Добавляй сюда свои транзакции в таком же формате -->
     </div>
 </div>
 
-<!-- Модальное окно (профиль + выход) -->
+<!-- Модальное окно (красивый профиль) -->
 <div id="modal" class="hidden flex items-center justify-center fixed inset-0 bg-black/70 z-50" onclick="closeModal(event)">
     <div class="bg-[#141414] rounded-3xl p-8 w-11/12 max-w-xs text-center shadow-2xl border border-[#222]" onclick="event.stopPropagation()">
         <div class="avatar-big">С</div>
         <h2 class="text-2xl font-bold mb-2">Сергей</h2>
-        <p class="text-zinc-400 mb-6">@Сергей</p>
+        <p class="text-zinc-400 mb-8">@Сергей</p>
 
         <p class="text-zinc-300 mb-6 font-mono break-all text-sm">
             0xc519118cd0c74879bd3FbF5fEaca473397540862
         </p>
 
         <button onclick="navigator.clipboard.writeText('0xc519118cd0c74879bd3FbF5fEaca473397540862').then(()=>alert('Адрес скопирован!'))" 
-                class="btn btn-copy">
+                class="profile-btn btn-copy">
             Скопировать адрес
         </button>
 
         <button onclick="alert('Seed-фраза доступна только при создании. Храните её в безопасном месте!')" 
-                class="btn btn-outline">
+                class="profile-btn btn-seed">
             Посмотреть seed-фразу
         </button>
 
-        <button onclick="logout()" class="btn btn-logout mt-4">
+        <button onclick="logout()" class="profile-btn btn-logout mt-4">
             Выйти
         </button>
 
@@ -345,7 +331,7 @@
                         </div>
                         <p class="tx-amount ${amountClass}">${tx.amount}</p>
                     </div>
-                    <div class="flex justify-between text-sm">
+                    <div class="flex justify-between text-sm mt-2">
                         <p class="text-zinc-400">${tx.usd}</p>
                         <p class="tx-status" style="background:${tx.status === 'Успешно' ? 'rgba(0,214,118,0.15)' : 'rgba(244,67,54,0.15)'}; color:${statusColor};">${tx.status}</p>
                     </div>
@@ -382,36 +368,5 @@
     generateHistory();
     setInterval(update, 15000);
 </script>
-
-<!-- Модальное окно при нажатии на аватар (твой красивый профиль) -->
-<div id="modal" class="hidden flex items-center justify-center fixed inset-0 bg-black/70 z-50" onclick="closeModal(event)">
-    <div class="bg-[#141414] rounded-3xl p-8 w-11/12 max-w-xs text-center shadow-2xl border border-[#222]" onclick="event.stopPropagation()">
-        <div class="avatar-big">С</div>
-        <h2 class="text-2xl font-bold mb-2">Сергей</h2>
-        <p class="text-zinc-400 mb-8">@Сергей</p>
-
-        <p class="text-zinc-300 mb-6 font-mono break-all text-sm">
-            0xc519118cd0c74879bd3FbF5fEaca473397540862
-        </p>
-
-        <button onclick="navigator.clipboard.writeText('0xc519118cd0c74879bd3FbF5fEaca473397540862').then(()=>alert('Адрес скопирован!'))" 
-                class="btn btn-copy">
-            Скопировать адрес
-        </button>
-
-        <button onclick="alert('Seed-фраза доступна только при создании. Храните её в безопасном месте!')" 
-                class="btn btn-outline">
-            Посмотреть seed-фразу
-        </button>
-
-        <button onclick="logout()" class="btn btn-logout mt-4">
-            Выйти
-        </button>
-
-        <button onclick="closeModal()" class="text-zinc-400 underline mt-4 block w-full">
-            Закрыть
-        </button>
-    </div>
-</div>
 </body>
 </html>

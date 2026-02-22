@@ -76,38 +76,10 @@
             max-width: 320px;
             text-align: center;
         }
-        /* Анимация загрузки */
-        #loader {
-            position: fixed;
-            inset: 0;
-            background: rgba(11,11,11,0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.6s ease;
-        }
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 6px solid #222;
-            border-top: 6px solid #00d676;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
         .usd-prefix::before { content: "$"; margin-right: 2px; }
     </style>
 </head>
 <body class="flex justify-center">
-<!-- Анимация загрузки -->
-<div id="loader">
-    <div class="spinner"></div>
-</div>
-
 <div class="w-full max-w-[420px] h-dvh flex flex-col bg-[#0b0b0b]">
     <!-- Шапка -->
     <div class="p-5 flex justify-between items-center">
@@ -175,7 +147,6 @@
     if (!localStorage.getItem('mnemonic')) {
         window.location.href = 'auth.html';
     }
-
     const tokens = [
         { id:'WBTC', name:'Wrapped Bitcoin', bal:0.3541, s:'wbtc', p:'WBTCUSDT' },
         { id:'USDT', name:'Tether USD', bal:20.00, s:'usdt', p:'USDTUSDT' },
@@ -192,9 +163,6 @@
     ];
 
     async function update() {
-        // Показываем лоадер при обновлении
-        document.getElementById('loader').style.display = 'flex';
-
         try {
             const res = await fetch('https://api.binance.com/api/v3/ticker/price');
             if (!res.ok) throw new Error('API error');
@@ -230,7 +198,7 @@
             const change24h = (Math.random() * 8 - 4).toFixed(2);
             const changeEl = document.getElementById('change-24h');
             changeEl.innerHTML = `
-                <span class="usd-prefix">${change24h > 0 ? '+' : ''}${change24h}%</span>
+                ${change24h > 0 ? '+' : ''}${change24h}%
                 <svg class="w-5 h-5 ${change24h > 0 ? 'change-positive' : change24h < 0 ? 'change-negative' : 'change-neutral'}" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="${change24h > 0 ? 'M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z' : 'M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L9 12.586V5a1 1 0 112 0v7.586l3.293-3.293a1 1 0 011.414 0z'}" clip-rule="evenodd" />
                 </svg>
@@ -239,12 +207,6 @@
             document.getElementById('assets-list').innerHTML = html;
         } catch (e) {
             console.error('Ошибка обновления:', e);
-        } finally {
-            // Скрываем лоадер после обновления
-            setTimeout(() => {
-                document.getElementById('loader').style.opacity = '0';
-                setTimeout(() => document.getElementById('loader').style.display = 'none', 600);
-            }, 800);
         }
     }
 
@@ -267,7 +229,6 @@
                     </div>
                     <div class="flex justify-between text-sm">
                         <p class="text-zinc-400 usd-prefix">${tx.usd}</p>
-                        <p class="text-zinc-300">${tx.usd}</p>
                     </div>
                 </div>`;
         });
@@ -297,27 +258,10 @@
         window.location.href = 'auth.html';
     }
 
-    // Показываем лоадер при первом запуске
-    document.getElementById('loader').style.display = 'flex';
-
-    // Запуск после загрузки
-    window.addEventListener('load', () => {
-        update();
-        generateHistory();
-        setInterval(update, 15000);
-
-        // Скрываем лоадер после первой загрузки
-        setTimeout(() => {
-            document.getElementById('loader').style.opacity = '0';
-            setTimeout(() => document.getElementById('loader').style.display = 'none', 600);
-        }, 1500);
-    });
+    update();
+    generateHistory();
+    setInterval(update, 15000);
 </script>
-
-<!-- Анимация загрузки -->
-<div id="loader">
-    <div class="w-16 h-16 border-4 border-[#222] border-t-[#00d676] rounded-full animate-spin"></div>
-</div>
 
 <!-- Модальное окно при нажатии на аватар -->
 <div id="modal" class="hidden flex items-center justify-center" onclick="closeModal(event)">

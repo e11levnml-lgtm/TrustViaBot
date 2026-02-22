@@ -6,78 +6,285 @@
     <title>TrustVia — Кошелёк</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #0b0b0b; color: white; font-family: sans-serif; margin: 0; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
-        header { background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid #222; }
-        .brand { font-size: 1.8rem; font-weight: 900; color: #00d676; }
-        .avatar { width: 44px; height: 44px; background: #00d676; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; }
-        .avatar:active { transform: scale(0.92); }
-        .balance { text-align: center; padding: 40px 20px; }
-        .total { font-size: 3.5rem; font-weight: 900; }
-        .actions { display: flex; justify-content: space-around; padding: 20px; background: #111; }
-        .action { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; cursor: pointer; transition: all 0.2s; }
-        .action:active { transform: scale(0.9); }
-        .green { background: #00d676; color: black; }
-        .tabs { display: flex; border-bottom: 1px solid #222; }
-        .tab { flex: 1; text-align: center; padding: 16px; font-weight: bold; cursor: pointer; }
-        .tab-active { color: #00d676; border-bottom: 3px solid #00d676; }
-        .content { flex: 1; overflow-y: auto; padding: 16px; }
-        .token { background: #141414; border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .token:active { background: #1a1a1a; }
-        #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 100; }
-        .modal-content { background: #141414; border-radius: 24px; padding: 24px; width: 90%; max-width: 360px; text-align: center; }
-        .modal-btn { background: #222; color: white; padding: 16px; border-radius: 9999px; margin: 12px 0; width: 100%; cursor: pointer; }
-        .modal-btn:active { transform: scale(0.97); }
-        .red { background: #ff4d4d; }
+        body { 
+            background: #0b0b0b; 
+            color: white; 
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
+            margin: 0; 
+            overflow: hidden; 
+            height: 100dvh; 
+        }
+        .action-btn { 
+            background: #1a1a1a; 
+            border-radius: 9999px; 
+            width: 64px; 
+            height: 64px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 28px; 
+            transition: transform 0.15s; 
+        }
+        .action-btn:hover { transform: scale(1.05); }
+        .action-btn.green { background: #00d676; color: #000; }
+        .tab { padding-bottom: 12px; cursor: pointer; transition: all 0.2s; }
+        .tab-active { color: #00d676; border-bottom: 3px solid #00d676; font-weight: 700; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        .token-row, .tx-item { transition: background 0.2s; }
+        .tx-item { background: #141414; border: 1px solid #1d1d1d; border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+        .tx-item:hover { background: #1a1a1a; }
+        .brand-title { 
+            font-size: 22px; 
+            font-weight: 800; 
+            background: linear-gradient(90deg, #00d676, #00e07f); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+        .avatar-btn {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #00d676, #00e07f);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+            border: 2px solid #222;
+            transition: transform 0.2s;
+        }
+        .avatar-btn:hover { transform: scale(1.08); }
+        .change-positive { color: #00d676; }
+        .change-negative { color: #ff4d4d; }
+        .change-neutral { color: #888; }
+        #modal { 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(0,0,0,0.7); 
+            display: none; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 100; 
+        }
+        .modal-content { 
+            background: #141414; 
+            border-radius: 24px; 
+            padding: 24px; 
+            width: 90%; 
+            max-width: 320px; 
+            text-align: center; 
+        }
     </style>
 </head>
-<body>
+<body class="flex justify-center">
 
-    <script>
-        if (!localStorage.getItem('mnemonic')) {
-            window.location.href = 'auth.html';
+<div class="w-full max-w-[420px] h-dvh flex flex-col bg-[#0b0b0b]">
+
+    <!-- Шапка -->
+    <div class="p-5 flex justify-between items-center">
+        <div class="brand-title">TrustVia</div>
+        <div onclick="openModal()" class="avatar-btn">С</div>
+    </div>
+
+    <!-- Баланс + изменение -->
+    <div class="text-center my-6">
+        <h1 id="total-usd" class="text-5xl font-extrabold tracking-tight">0.00 $</h1>
+        
+        <div id="change-24h" class="mt-3 text-xl font-bold flex items-center justify-center gap-2">
+            <span>0.00%</span>
+            <svg class="w-5 h-5 change-neutral" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 3l-7 7h4v7h6v-7h4l-7-7z" />
+            </svg>
+        </div>
+    </div>
+
+    <!-- Кнопки действий -->
+    <div class="flex justify-around gap-4 px-8 mb-10">
+        <div onclick="location.href='send.html'" class="flex flex-col items-center gap-2 cursor-pointer">
+            <div class="action-btn">↑</div>
+            <span class="text-xs font-bold uppercase">Отправить</span>
+        </div>
+        <div onclick="location.href='receive.html'" class="flex flex-col items-center gap-2 cursor-pointer">
+            <div class="action-btn green">↓</div>
+            <span class="text-xs font-bold uppercase text-[#00d676]">Получить</span>
+        </div>
+        <div onclick="location.href='swap.html'" class="flex flex-col items-center gap-2 cursor-pointer">
+            <div class="action-btn">⇄</div>
+            <span class="text-xs font-bold uppercase">Обмен</span>
+        </div>
+    </div>
+
+    <!-- Вкладки -->
+    <div class="flex px-8 text-sm font-semibold text-zinc-400 border-b border-[#1a1a1a]">
+        <div id="tab-assets" onclick="switchTab('assets')" class="tab tab-active flex-1 text-center">Активы</div>
+        <div id="tab-history" onclick="switchTab('history')" class="tab flex-1 text-center">История</div>
+    </div>
+
+    <!-- Контент -->
+    <div id="assets-list" class="flex-1 overflow-y-auto hide-scroll p-5 space-y-3"></div>
+    <div id="history-list" class="flex-1 overflow-y-auto hide-scroll p-5 space-y-3 hidden"></div>
+
+</div>
+
+<!-- Модальное окно выхода -->
+<div id="modal" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h2 class="text-2xl font-bold mb-6">Сергей</h2>
+        <p class="text-zinc-400 mb-8">@Сергей</p>
+        <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-full uppercase">
+            Выйти
+        </button>
+        <button onclick="closeModal()" class="mt-4 text-zinc-400 underline">Закрыть</button>
+    </div>
+</div>
+
+<script>
+    if (!localStorage.getItem('mnemonic')) {
+        window.location.href = 'auth.html';
+    }
+
+    const tokens = [
+        { id:'WBTC', name:'Wrapped Bitcoin', bal:0.3541, s:'wbtc', p:'WBTCUSDT' },
+        { id:'USDT', name:'Tether USD', bal:20.00, s:'usdt', p:'USDTUSDT' },
+        { id:'ETH', name:'Ethereum', bal:0.12, s:'eth', p:'ETHUSDT' },
+        { id:'USDC', name:'USD Coin', bal:0, s:'usdc', p:'USDCUSDT' },
+        { id:'LINK', name:'Chainlink', bal:0, s:'link', p:'LINKUSDT' },
+        { id:'UNI', name:'Uniswap', bal:0, s:'uni', p:'UNIUSDT' },
+        { id:'SHIB', name:'Shiba Inu', bal:0, s:'shib', p:'SHIBUSDT' },
+        { id:'PEPE', name:'Pepe', bal:0, s:'pepe', p:'PEPEUSDT' },
+        { id:'DAI', name:'Dai', bal:0, s:'dai', p:'DAIUSDT' },
+        { id:'AAVE', name:'Aave', bal:0, s:'aave', p:'AAVEUSDT' },
+        { id:'MKR', name:'Maker', bal:0, s:'mkr', p:'MKRUSDT' },
+        { id:'LDO', name:'Lido DAO', bal:0, s:'ldo', p:'LDOUSDT' }
+    ];
+
+    async function update() {
+        try {
+            const res = await fetch('https://api.binance.com/api/v3/ticker/price');
+            if (!res.ok) throw new Error('API error');
+            const prices = await res.json();
+            let total = 0;
+            let html = '';
+
+            tokens.forEach(t => {
+                let price = 1;
+                if (t.p !== 'USDTUSDT') {
+                    const pData = prices.find(p => p.symbol === t.p);
+                    price = pData ? parseFloat(pData.price) : 0;
+                }
+                const val = t.bal * price;
+                total += val;
+                html += `
+                    <div onclick="location.href='chart.html?id=${t.id}&bal=${t.bal}&sym=${t.p}&icon=${t.s}'" 
+                         class="token-row flex justify-between items-center p-4 bg-[#141414] rounded-3xl border border-[#1d1d1d] cursor-pointer">
+                        <div class="flex items-center gap-4">
+                            <img src="https://assets.coincap.io/assets/icons/${t.s}@2x.png" 
+                                 onerror="this.src='https://via.placeholder.com/40?text=${t.id}'" 
+                                 class="w-11 h-11 rounded-full">
+                            <div>
+                                <p class="font-semibold text-base">${t.name}</p>
+                                <p class="text-xs text-zinc-500">${t.bal.toFixed(4)} ${t.id}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-base">${val.toLocaleString('ru-RU', {minimumFractionDigits: 2})} $</p>
+                        </div>
+                    </div>`;
+            });
+
+            document.getElementById('total-usd').textContent = total.toLocaleString('ru-RU', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' $';
+
+            const change24h = (Math.random() * 8 - 4).toFixed(2);
+            const changeEl = document.getElementById('change-24h');
+            changeEl.innerHTML = `
+                ${change24h > 0 ? '+' : ''}${change24h}%
+                <svg class="w-5 h-5 ${change24h > 0 ? 'change-positive' : change24h < 0 ? 'change-negative' : 'change-neutral'}" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="${change24h > 0 ? 'M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z' : 'M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L9 12.586V5a1 1 0 112 0v7.586l3.293-3.293a1 1 0 011.414 0z'}" clip-rule="evenodd" />
+                </svg>
+            `;
+            changeEl.className = `mt-3 text-xl font-bold flex items-center justify-center gap-2 ${change24h > 0 ? 'change-positive' : change24h < 0 ? 'change-negative' : 'change-neutral'}`;
+
+            document.getElementById('assets-list').innerHTML = html;
+        } catch (e) {
+            console.error('Ошибка обновления:', e);
         }
-    </script>
+    }
 
-    <header>
-        <div class="brand">TrustVia</div>
-        <div class="avatar" onclick="document.getElementById('modal').style.display='flex'">С</div>
-    </header>
+    function generateHistory() {
+        // Только твои 2 транзакции — больше ничего не добавляется
+        const fixedTransactions = [
+            { type: "Отправлено", token: "ETH", amount: "0.0500", usd: "120.45", date: "15.02.2026 14:30", status: "Успешно" },
+            { type: "Получено", token: "USDT", amount: "500.00", usd: "500.00", date: "14.02.2026 09:15", status: "Успешно" }
+        ];
 
-    <div class="balance">
-        <div class="total">396.00 $</div>
-        <div style="color:#00d676; font-size:1.2rem; margin-top:8px;">+1.23% (24ч)</div>
-    </div>
+        let html = '';
+        fixedTransactions.forEach(tx => {
+            const statusColor = tx.status === 'Успешно' ? '#00d676' : '#ff4d4d';
+            html += `
+                <div class="tx-item">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <p class="font-bold text-base">${tx.type} ${tx.amount} ${tx.token}</p>
+                            <p class="text-xs text-zinc-500 mt-1">${tx.date}</p>
+                        </div>
+                        <p style="color: ${statusColor};" class="font-medium">${tx.status}</p>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <p class="text-zinc-400">Сетевой сбор: ~0.002 ETH</p>
+                        <p class="text-zinc-300">${tx.usd} $</p>
+                    </div>
+                </div>`;
+        });
 
-    <div class="actions">
-        <div onclick="location.href='send.html'" class="action">↑</div>
-        <div onclick="location.href='receive.html'" class="action green">↓</div>
-        <div onclick="location.href='swap.html'" class="action">⇄</div>
-    </div>
+        document.getElementById('history-list').innerHTML = html;
+    }
 
-    <div class="tabs">
-        <div class="tab tab-active">Активы</div>
-        <div class="tab">История</div>
-    </div>
+    function switchTab(tab) {
+        document.getElementById('assets-list').classList.toggle('hidden', tab !== 'assets');
+        document.getElementById('history-list').classList.toggle('hidden', tab !== 'history');
+        document.getElementById('tab-assets').classList.toggle('tab-active', tab === 'assets');
+        document.getElementById('tab-history').classList.toggle('tab-active', tab === 'history');
+    }
 
-    <div class="content">
-        <div class="token" onclick="location.href='chart.html?id=ETH&bal=0.12'">
-            <div>ETH</div>
-            <div>0.12 • $396</div>
+    function openModal() {
+        document.getElementById('modal').style.display = 'flex';
+    }
+
+    function closeModal(e) {
+        if (e.target.id === 'modal' || e.target.textContent.includes('Закрыть')) {
+            document.getElementById('modal').style.display = 'none';
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem('mnemonic');
+        localStorage.removeItem('walletAddress');
+        window.location.href = 'auth.html';
+    }
+
+    update();
+    generateHistory();
+    setInterval(update, 15000);
+</script>
+
+<!-- Модальное окно при нажатии на аватар -->
+<div id="modal" class="hidden flex items-center justify-center" onclick="closeModal(event)">
+    <div class="bg-[#141414] rounded-3xl p-8 w-11/12 max-w-xs text-center shadow-2xl border border-[#222]" onclick="event.stopPropagation()">
+        <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-[#00d676] to-[#00e07f] rounded-full flex items-center justify-center text-3xl font-bold text-black">
+            С
         </div>
-        <div class="token" onclick="location.href='chart.html?id=USDT&bal=20000'">
-            <div>USDT</div>
-            <div>20,000 • $20,000</div>
-        </div>
+        <h2 class="text-2xl font-bold mb-2">Сергей</h2>
+        <p class="text-zinc-400 mb-8">@Сергей</p>
+        <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-full uppercase tracking-wider mb-4">
+            Выйти
+        </button>
+        <button onclick="closeModal({target:{id:'modal'}})" class="text-zinc-400 underline">
+            Закрыть
+        </button>
     </div>
-
-    <div id="modal" onclick="this.style.display='none'">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <h2 style="margin-bottom:16px;">Сергей</h2>
-            <div class="modal-btn" onclick="navigator.clipboard.writeText('0xc519118cd0c74879bd3FbF5fEaca473397540862').then(()=>alert('Скопировано'))">Скопировать адрес</div>
-            <div class="modal-btn red" onclick="localStorage.clear(); location.href='auth.html'">Выйти</div>
-            <div style="margin-top:20px; color:#888; cursor:pointer;" onclick="document.getElementById('modal').style.display='none'">Закрыть</div>
-        </div>
-    </div>
+</div>
 
 </body>
 </html>

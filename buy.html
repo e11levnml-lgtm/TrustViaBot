@@ -3,76 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TrustVia — Получить актив</title>
+    <title>Купить</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { 
-            background: #0b0b0b; 
-            color: white; 
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
-            margin: 0; 
-            overflow-y: auto; 
-        }
-        .token-item {
-            transition: all 0.15s ease;
-        }
-        .token-item:active {
-            transform: scale(0.98);
-        }
-        .token-item:hover {
-            background: #1a1a1a !important;
-        }
-        img.token-icon {
-            background: #111;
-            border-radius: 50%;
-        }
+        body { background: #0b0b0b; color: white; margin: 0; min-height: 100dvh; padding: 16px; font-family: sans-serif; }
+        .item { background: #141414; border: 1px solid #333; border-radius: 16px; padding: 16px; margin: 12px 0; display: flex; align-items: center; gap: 16px; cursor: pointer; }
+        .item:active { background: #1a1a1a; }
+        .back { color: #00d676; font-size: 1.5rem; margin-bottom: 20px; cursor: pointer; }
     </style>
 </head>
-<body class="min-h-dvh p-5">
+<body>
 
-    <!-- Header -->
-    <div class="flex items-center gap-4 mb-8">
-        <button onclick="location.href='index.html'" class="text-[#00d676] text-4xl font-bold">←</button>
-        <h2 class="font-bold text-lg tracking-wide">Получить актив (ERC-20)</h2>
+    <div class="back" onclick="location.href='index.html'">← Назад</div>
+    <h1 style="text-align:center;">Купить</h1>
+
+    <div class="item" onclick="alert('Переход к покупке ETH (демо)')">
+        <div style="width:48px;height:48px;background:#333;border-radius:50%;"></div>
+        <div>
+            <p style="font-weight:bold;">ETH</p>
+            <p style="color:#aaa;">Ethereum</p>
+        </div>
     </div>
 
-    <!-- Список токенов -->
-    <div id="list" class="space-y-4"></div>
+    <div class="item" onclick="alert('Переход к покупке USDT (демо)')">
+        <div style="width:48px;height:48px;background:#333;border-radius:50%;"></div>
+        <div>
+            <p style="font-weight:bold;">USDT</p>
+            <p style="color:#aaa;">Tether USD</p>
+        </div>
+    </div>
 
-    <script>
-        const tokens = [
-            { id: 'USDT', name: 'Tether USD', icon: 'usdt', sym: 'USDTUSDT' },
-            { id: 'USDC', name: 'USD Coin', icon: 'usdc', sym: 'USDCUSDT' },
-            { id: 'DAI', name: 'Dai', icon: 'dai', sym: 'DAIUSDT' },
-            { id: 'ETH', name: 'Ethereum', icon: 'eth', sym: 'ETHUSDT' },
-            { id: 'WBTC', name: 'Wrapped Bitcoin', icon: 'wbtc', sym: 'WBTCUSDT' },
-            { id: 'MATIC', name: 'Polygon', icon: 'matic', sym: 'MATICUSDT' },
-            { id: 'ARB', name: 'Arbitrum', icon: 'arb', sym: 'ARBUSDT' },
-            { id: 'LINK', name: 'Chainlink', icon: 'link', sym: 'LINKUSDT' },
-            { id: 'UNI', name: 'Uniswap', icon: 'uni', sym: 'UNIUSDT' },
-            { id: 'AAVE', name: 'Aave', icon: 'aave', sym: 'AAVEUSDT' },
-            { id: 'MKR', name: 'Maker', icon: 'mkr', sym: 'MKRUSDT' },
-            { id: 'LDO', name: 'Lido DAO', icon: 'ldo', sym: 'LDOUSDT' },
-            { id: 'PEPE', name: 'Pepe', icon: 'pepe', sym: 'PEPEUSDT' },
-            { id: 'SHIB', name: 'Shiba Inu', icon: 'shib', sym: 'SHIBUSDT' }
-        ];
-
-        const listEl = document.getElementById('list');
-
-        tokens.forEach(t => {
-            listEl.innerHTML += `
-                <div onclick="location.href='chart.html?id=${t.id}&bal=0&sym=${t.sym}&icon=${t.icon}'" 
-                     class="token-item flex items-center gap-4 p-5 bg-[#141414] rounded-3xl border border-[#1d1d1d] cursor-pointer">
-                    <img src="https://assets.coincap.io/assets/icons/${t.icon}@2x.png" 
-                         onerror="this.src='https://via.placeholder.com/40?text=${t.id}'"
-                         class="w-12 h-12 token-icon" alt="${t.id}">
-                    <div>
-                        <p class="font-bold text-lg">${t.name}</p>
-                        <p class="text-xs text-zinc-500 font-medium uppercase tracking-wide">${t.id} • Ethereum</p>
-                    </div>
-                </div>`;
-        });
-    </script>
-
+    <!-- Добавь остальные токены -->
 </body>
 </html>

@@ -3,86 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TrustVia — Отправить</title>
+    <title>Отправить</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #0b0b0b; color: white; font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; min-height: 100dvh; }
-        .input-field { background: #161616; border: 1px solid #222; border-radius: 20px; padding: 16px; font-size: 18px; font-weight: bold; transition: border 0.2s; }
-        .input-field:focus { border-color: #00d676; outline: none; }
-        .btn-max { background: rgba(0, 214, 118, 0.15); color: #00d676; font-size: 12px; font-weight: bold; padding: 6px 12px; border-radius: 9999px; cursor: pointer; transition: background 0.2s; }
-        .btn-max:active { background: rgba(0, 214, 118, 0.3); }
-        .btn-send { background: #00d676; color: black; font-weight: 700; border-radius: 9999px; padding: 18px; width: 100%; transition: all 0.2s; }
-        .btn-send:active { transform: scale(0.97); }
-        .error-box { color: #ff4d4d; font-size: 13px; margin-top: 8px; text-align: center; display: none; padding: 10px; background: rgba(255,77,77,0.1); border-radius: 12px; }
+        body { background: #0b0b0b; color: white; margin: 0; min-height: 100dvh; padding: 16px; font-family: sans-serif; }
+        input, select { background: #141414; border: 1px solid #333; color: white; padding: 16px; border-radius: 16px; width: 100%; margin: 8px 0; font-size: 1.1rem; }
+        input:focus, select:focus { border-color: #00d676; outline: none; }
+        button { background: #00d676; color: black; font-weight: bold; padding: 16px; border-radius: 9999px; width: 100%; margin-top: 20px; cursor: pointer; }
+        button:active { transform: scale(0.97); }
+        .back { color: #00d676; font-size: 1.5rem; margin-bottom: 20px; cursor: pointer; }
+        .error { color: #ff4d4d; text-align: center; margin: 10px 0; display: none; }
     </style>
 </head>
-<body class="flex justify-center p-6">
+<body>
 
-    <div class="w-full max-w-[420px]">
-        <div class="flex justify-between items-center mb-10">
-            <button onclick="location.href='index.html'" class="text-zinc-400 font-bold text-sm uppercase">Отмена</button>
-            <h2 class="font-bold text-xl">Отправить</h2>
-            <div class="w-10"></div>
-        </div>
+    <div class="back" onclick="location.href='index.html'">← Назад</div>
+    <h1 style="text-align:center; margin-bottom:20px;">Отправить</h1>
 
-        <select id="token-select" class="input-field w-full mb-4 text-[#00d676]"></select>
+    <select id="token">
+        <option>ETH</option>
+        <option>USDT</option>
+        <option>WBTC</option>
+    </select>
 
-        <input id="recipient" type="text" placeholder="Адрес получателя (0x...)" class="input-field w-full mb-4" oninput="validateAddress(this)">
+    <input id="to" placeholder="Адрес получателя (0x...)">
+    <input id="amount" type="number" placeholder="Сумма" step="0.0001">
 
-        <div class="input-field flex justify-between items-center">
-            <input id="amount" type="number" step="any" placeholder="0.00" class="bg-transparent outline-none w-3/5 text-xl font-bold">
-            <div class="flex items-center gap-3">
-                <span id="token-symbol" class="text-[#00d676] font-bold">ETH</span>
-                <span class="btn-max" onclick="setMax()">MAX</span>
-            </div>
-        </div>
+    <div id="err" class="error"></div>
 
-        <p id="send-error" class="error-box">Ошибка: недостаточно средств или неверный адрес</p>
-
-        <button onclick="trySend()" class="btn-send mt-10 uppercase tracking-wider">Отправить</button>
-    </div>
+    <button onclick="send()">Отправить</button>
 
     <script>
-        const tokens = ['ETH','USDT','WBTC','USDC','LINK','UNI','SHIB','PEPE','DAI','AAVE','MKR','LDO'];
-        const select = document.getElementById('token-select');
-        tokens.forEach(t => select.innerHTML += `<option>${t}</option>`);
-        select.value = 'ETH';
-        document.getElementById('token-symbol').textContent = 'ETH';
+        function send() {
+            const to = document.getElementById('to').value.trim();
+            const amount = document.getElementById('amount').value;
+            const err = document.getElementById('err');
 
-        select.onchange = () => document.getElementById('token-symbol').textContent = select.value;
+            err.style.display = 'none';
 
-        function validateAddress(el) {
-            const val = el.value.trim();
-            el.style.borderColor = val === '' ? '#222' : (/^0x[a-fA-F0-9]{40}$/.test(val) ? '#00d676' : '#ff4d4d');
-        }
-
-        function setMax() {
-            const mockMax = { ETH: 0.12, USDT: 20000, WBTC: 0.3541, USDC: 0, LINK: 0, UNI: 0, SHIB: 0, PEPE: 0, DAI: 0, AAVE: 0, MKR: 0, LDO: 0 };
-            document.getElementById('amount').value = mockMax[select.value] || 0;
-        }
-
-        function trySend() {
-            const addr = document.getElementById('recipient').value.trim();
-            const amount = parseFloat(document.getElementById('amount').value) || 0;
-            const errorEl = document.getElementById('send-error');
-
-            if (!/^0x[a-fA-F0-9]{40}$/.test(addr)) {
-                errorEl.textContent = 'Неверный адрес получателя';
-                errorEl.style.display = 'block';
+            if (!to.startsWith('0x') || to.length !== 42) {
+                err.textContent = 'Неверный адрес';
+                err.style.display = 'block';
                 return;
             }
-            if (amount <= 0) {
-                errorEl.textContent = 'Укажите сумму';
-                errorEl.style.display = 'block';
+            if (!amount || amount <= 0) {
+                err.textContent = 'Укажи сумму';
+                err.style.display = 'block';
                 return;
             }
 
-            errorEl.textContent = 'Транзакция отправлена (демо-режим)';
-            errorEl.style.color = '#00d676';
-            errorEl.style.background = 'rgba(0,214,118,0.1)';
-            errorEl.style.border = '1px solid #00d676';
-            errorEl.style.display = 'block';
-            setTimeout(() => errorEl.style.display = 'none', 4000);
+            alert('Отправлено (демо): ' + amount + ' → ' + to);
         }
     </script>
 </body>

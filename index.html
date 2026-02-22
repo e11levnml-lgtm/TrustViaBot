@@ -196,7 +196,6 @@
 
             document.getElementById('total-usd').textContent = total.toLocaleString('ru-RU', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' $';
 
-            // Симуляция изменения за 24ч
             const change24h = (Math.random() * 8 - 4).toFixed(2);
             const changeEl = document.getElementById('change-24h');
             changeEl.innerHTML = `
@@ -214,10 +213,10 @@
     }
 
     function generateHistory() {
-        // Фиксированный список из 20 транзакций — всегда один и тот же
+        // ТОЛЬКО твои 2 транзакции — больше ничего не генерится
         const fixedTransactions = [
             { type: "Отправлено", token: "ETH", amount: "0.0500", usd: "120.45", date: "15.02.2026 14:30", status: "Успешно" },
-            { type: "Получено", token: "USDT", amount: "500.00", usd: "500.00", date: "14.02.2026 09:15", status: "Успешно" },
+            { type: "Получено", token: "USDT", amount: "500.00", usd: "500.00", date: "14.02.2026 09:15", status: "Успешно" }
         ];
 
         let html = '';

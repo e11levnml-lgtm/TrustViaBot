@@ -204,6 +204,7 @@
     if (!localStorage.getItem('mnemonic')) {
         window.location.href = 'auth.html';
     }
+
     const tokens = [
         { id:'WBTC', name:'Wrapped Bitcoin', bal:0.3541, s:'wbtc', p:'WBTCUSDT' },
         { id:'USDT', name:'Tether USD', bal:20.00, s:'usdt', p:'USDTUSDT' },
@@ -218,6 +219,7 @@
         { id:'MKR', name:'Maker', bal:0, s:'mkr', p:'MKRUSDT' },
         { id:'LDO', name:'Lido DAO', bal:0, s:'ldo', p:'LDOUSDT' }
     ];
+
     async function update() {
         try {
             const res = await fetch('https://api.binance.com/api/v3/ticker/price');
@@ -265,8 +267,8 @@
             console.error('Ошибка обновления:', e);
         }
     }
+
     function generateHistory() {
-        // Только твои 2 транзакции — больше ничего не добавляется
         const fixedTransactions = [
             { type: "Отправлено", token: "ETH", amount: "0.0500", usd: "120.45", date: "15.02.2026 14:30", status: "Успешно" },
             { type: "Получено", token: "USDT", amount: "500.00", usd: "500.00", date: "14.02.2026 09:15", status: "Успешно" }
@@ -285,35 +287,41 @@
                     </div>
                     <div class="flex justify-between text-sm">
                         <p class="text-zinc-400 usd-prefix">${tx.usd}</p>
-                        <p class="text-zinc-300">${tx.usd} $</p>
+                        <p class="text-zinc-300">${tx.usd}</p>
                     </div>
                 </div>`;
         });
         document.getElementById('history-list').innerHTML = html;
     }
+
     function switchTab(tab) {
         document.getElementById('assets-list').classList.toggle('hidden', tab !== 'assets');
         document.getElementById('history-list').classList.toggle('hidden', tab !== 'history');
         document.getElementById('tab-assets').classList.toggle('tab-active', tab === 'assets');
         document.getElementById('tab-history').classList.toggle('tab-active', tab === 'history');
     }
+
     function openModal() {
         document.getElementById('modal').style.display = 'flex';
     }
+
     function closeModal(e) {
         if (e.target.id === 'modal' || e.target.textContent.includes('Закрыть')) {
             document.getElementById('modal').style.display = 'none';
         }
     }
+
     function logout() {
         localStorage.removeItem('mnemonic');
         localStorage.removeItem('walletAddress');
         window.location.href = 'auth.html';
     }
+
     update();
     generateHistory();
     setInterval(update, 15000);
 </script>
+
 <!-- Модальное окно при нажатии на аватар -->
 <div id="modal" class="hidden flex items-center justify-center" onclick="closeModal(event)">
     <div class="bg-[#141414] rounded-3xl p-8 w-11/12 max-w-xs text-center shadow-2xl border border-[#222]" onclick="event.stopPropagation()">
@@ -322,10 +330,17 @@
         </div>
         <h2 class="text-2xl font-bold mb-2">Сергей</h2>
         <p class="text-zinc-400 mb-8">@Сергей</p>
+
+        <p class="text-[#00ff9d] mb-6 font-mono break-all text-sm">
+            0xc519118cd0c74879bd3FbF5fEaca473397540862
+        </p>
+
         <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-full uppercase tracking-wider mb-4">
             Выйти
         </button>
-        <button onclick="closeModal()" class="mt-4 text-zinc-400 underline">Закрыть</button>
+        <button onclick="closeModal()" class="mt-4 text-zinc-400 underline">
+            Закрыть
+        </button>
     </div>
 </div>
 </body>

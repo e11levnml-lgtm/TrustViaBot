@@ -152,48 +152,35 @@
 
 <div class="w-full max-w-[420px] h-dvh flex flex-col bg-[#0b0b0b]">
 
-    <!-- Шапка с иконкой сети и полупрозрачностью -->
-    <div class="header flex justify-between items-center">
-        <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#00d676] to-[#00e07f] flex items-center justify-center text-xs font-bold">ETH</div>
-            <div class="brand-title">TrustVia</div>
-        </div>
-        <div class="text-xs bg-[#1a1a1a] px-3 py-1.5 rounded-full border border-[#00d676]/30 text-[#00d676] font-medium">
-            Ethereum Mainnet ▼
-        </div>
+    <!-- Шапка -->
+    <div class="p-5 flex justify-between items-center">
+        <div class="brand-title">TrustVia</div>
+        <div onclick="openModal()" class="avatar-btn">С</div>
     </div>
 
     <!-- Баланс + изменение -->
-    <div class="text-center my-8 relative">
-        <div class="flex items-center justify-center gap-2">
-            <svg class="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12z"/>
-                <circle cx="10" cy="10" r="3" fill="#FFD700"/>
-            </svg>
-            <h1 id="total-usd" class="text-5xl font-extrabold tracking-tight transition-all duration-700 ease-out">0.00 $</h1>
-        </div>
-        <div id="loading-spinner" class="mt-2"></div>
+    <div class="text-center my-6">
+        <h1 id="total-usd" class="text-5xl font-extrabold tracking-tight">0.00 $</h1>
         
-        <div id="change-24h" class="mt-2 text-xl font-bold flex items-center justify-center gap-2">
+        <div id="change-24h" class="mt-3 text-xl font-bold flex items-center justify-center gap-2">
             <span>0.00%</span>
             <svg class="w-5 h-5 change-neutral" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10 3l-7 7h4v7h6v-7h4l-7-7z" />
             </svg>
-            <span class="text-xs text-zinc-500 ml-1">за 24 часа</span>
         </div>
     </div>
 
     <!-- Кнопки действий -->
-    <div class="flex justify-around gap-6 px-8 mb-10">
-        <div onclick="location.href='send.html'" class="flex flex-col items-center gap-2 cursor-pointer btn-pulse">
+    <div class="flex justify-around gap-4 px-8 mb-10">
+        <div onclick="location.href='send.html'" class="flex flex-col items-center gap-2 cursor-pointer">
             <div class="action-btn">↑</div>
             <span class="text-xs font-bold uppercase">Отправить</span>
         </div>
-        <div onclick="location.href='receive.html'" class="flex flex-col items-center gap-2 cursor-pointer btn-pulse">
+        <div onclick="location.href='receive.html'" class="flex flex-col items-center gap-2 cursor-pointer">
             <div class="action-btn green">↓</div>
             <span class="text-xs font-bold uppercase text-[#00d676]">Получить</span>
         </div>
-        <div onclick="location.href='swap.html'" class="flex flex-col items-center gap-2 cursor-pointer btn-pulse">
+        <div onclick="location.href='swap.html'" class="flex flex-col items-center gap-2 cursor-pointer">
             <div class="action-btn">⇄</div>
             <span class="text-xs font-bold uppercase">Обмен</span>
         </div>
@@ -206,34 +193,26 @@
     </div>
 
     <!-- Контент -->
-    <div id="assets-list" class="flex-1 overflow-y-auto hide-scroll p-5 space-y-4"></div>
-    <div id="history-list" class="flex-1 overflow-y-auto hide-scroll p-5 space-y-4 hidden"></div>
+    <div id="assets-list" class="flex-1 overflow-y-auto hide-scroll p-5 space-y-3"></div>
+    <div id="history-list" class="flex-1 overflow-y-auto hide-scroll p-5 space-y-3 hidden"></div>
 
 </div>
 
 <!-- Модальное окно выхода -->
 <div id="modal" onclick="closeModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
-        <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-[#00d676] to-[#00e07f] rounded-full flex items-center justify-center text-4xl font-bold text-black">
-            С
-        </div>
-        <h2 class="text-2xl font-bold mb-2">Сергей</h2>
-        <p class="text-zinc-400 mb-6">@Сергей</p>
-        
-        <button onclick="navigator.clipboard.writeText(localStorage.getItem('walletAddress') || '0xc519118cd0c74879bd3FbF5fEaca473397540862'); alert('Адрес скопирован!')" class="w-full bg-[#1a1a1a] hover:bg-[#222] text-white font-bold py-4 rounded-full mb-4">
+        <h2 class="text-2xl font-bold mb-6">Сергей</h2>
+        <p class="text-zinc-400 mb-8">@Сергей</p>
+        <button onclick="navigator.clipboard.writeText('0xc519118cd0c74879bd3FbF5fEaca473397540862'); alert('Адрес скопирован!')" class="w-full bg-[#1a1a1a] hover:bg-[#222] text-white font-bold py-4 rounded-full mb-4">
             Скопировать адрес
         </button>
-        
         <button onclick="alert('Seed-фраза показывается только один раз при создании. Храните её в безопасности!')" class="w-full bg-[#1a1a1a] hover:bg-[#222] text-white font-bold py-4 rounded-full mb-6">
             Посмотреть seed-фразу
         </button>
-        
         <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-full uppercase tracking-wider">
             Выйти
         </button>
-        <button onclick="closeModal()" class="mt-4 text-zinc-400 underline">
-            Закрыть
-        </button>
+        <button onclick="closeModal()" class="mt-4 text-zinc-400 underline">Закрыть</button>
     </div>
 </div>
 
@@ -243,12 +222,21 @@
     }
 
     const tokens = [
-        { id:'WBTC', name:'Wrapped Bitcoin', bal:0.3541, s:'wbtc', p:'WBTCUSDT' },
-        { id:'USDT', name:'Tether USD', bal:20.00, s:'usdt', p:'USDTUSDT' },
+        { id:'WBTC', name:'Wrapped Bitcoin', bal:0.08441, s:'wbtc', p:'WBTCUSDT' },
+        { id:'USDT', name:'Tether USD', bal:0.37, s:'usdt', p:'USDTUSDT' },
+        { id:'ETH', name:'Ethereum', bal:0.02, s:'eth', p:'ETHUSDT' },
+        { id:'USDC', name:'USD Coin', bal:0, s:'usdc', p:'USDCUSDT' },
+        { id:'LINK', name:'Chainlink', bal:0, s:'link', p:'LINKUSDT' },
+        { id:'UNI', name:'Uniswap', bal:0, s:'uni', p:'UNIUSDT' },
+        { id:'SHIB', name:'Shiba Inu', bal:72473, s:'shib', p:'SHIBUSDT' },
+        { id:'PEPE', name:'Pepe', bal:18400, s:'pepe', p:'PEPEUSDT' },
+        { id:'DAI', name:'Dai', bal:0, s:'dai', p:'DAIUSDT' },
+        { id:'AAVE', name:'Aave', bal:0, s:'aave', p:'AAVEUSDT' },
+        { id:'MKR', name:'Maker', bal:0, s:'mkr', p:'MKRUSDT' },
+        { id:'LDO', name:'Lido DAO', bal:0, s:'ldo', p:'LDOUSDT' }
     ];
 
     async function update() {
-        document.getElementById('loading-spinner').style.display = 'block';
         try {
             const res = await fetch('https://api.binance.com/api/v3/ticker/price');
             if (!res.ok) throw new Error('API error');
@@ -269,10 +257,10 @@
                          class="token-row flex justify-between items-center p-4 bg-[#141414] rounded-3xl border border-[#1d1d1d] cursor-pointer">
                         <div class="flex items-center gap-4">
                             <img src="https://assets.coincap.io/assets/icons/${t.s}@2x.png" 
-                                 onerror="this.src='https://via.placeholder.com/48?text=${t.id}'" 
-                                 class="w-12 h-12 rounded-full shadow-md ring-1 ring-[#00d676]/30">
+                                 onerror="this.src='https://via.placeholder.com/40?text=${t.id}'" 
+                                 class="w-12 h-12 rounded-full shadow-md">
                             <div>
-                                <p class="font-semibold text-base">$ ${val.toLocaleString('ru-RU', {minimumFractionDigits: 2})}</p>
+                                <p class="font-semibold text-base">${t.name}</p>
                                 <p class="text-xs text-zinc-500">${t.bal.toFixed(4)} ${t.id}</p>
                             </div>
                         </div>
@@ -282,12 +270,7 @@
                     </div>`;
             });
 
-            const balanceEl = document.getElementById('total-usd');
-            balanceEl.style.opacity = '0.5';
-            setTimeout(() => {
-                balanceEl.textContent = total.toLocaleString('ru-RU', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' $';
-                balanceEl.style.opacity = '1';
-            }, 300);
+            document.getElementById('total-usd').textContent = total.toLocaleString('ru-RU', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' $';
 
             const change24h = (Math.random() * 8 - 4).toFixed(2);
             const changeEl = document.getElementById('change-24h');
@@ -298,16 +281,16 @@
                 </svg>
                 <span class="text-xs text-zinc-500 ml-1">за 24 часа</span>
             `;
-            changeEl.className = `mt-2 text-xl font-bold flex items-center justify-center gap-2 ${change24h > 0 ? 'change-positive' : change24h < 0 ? 'change-negative' : 'change-neutral'}`;
+            changeEl.className = `mt-3 text-xl font-bold flex items-center justify-center gap-2 ${change24h > 0 ? 'change-positive' : change24h < 0 ? 'change-negative' : 'change-neutral'}`;
+
             document.getElementById('assets-list').innerHTML = html;
         } catch (e) {
-            console.error('Ошибка:', e);
-        } finally {
-            document.getElementById('loading-spinner').style.display = 'none';
+            console.error('Ошибка обновления:', e);
         }
     }
 
     function generateHistory() {
+        // Фиксированный список транзакций — всегда один и тот же
         const fixedTransactions = [
             { type: "Отправлено", token: "ETH", amount: "0.0500", usd: "120.45", date: "15.02.2026 14:30", status: "Успешно" },
             { type: "Получено", token: "USDT", amount: "500.00", usd: "500.00", date: "14.02.2026 09:15", status: "Успешно" },
@@ -393,33 +376,5 @@
     setInterval(update, 15000);
 </script>
 
-<!-- Модальное окно при нажатии на аватар -->
-<div id="modal" class="hidden flex items-center justify-center" onclick="closeModal(event)">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-[#00d676] to-[#00e07f] rounded-full flex items-center justify-center text-4xl font-bold text-black shadow-lg">
-            С
-        </div>
-        <h2 class="text-2xl font-bold mb-2">Сергей</h2>
-        <p class="text-zinc-400 mb-6">@E11LEVN</p>
-        
-        <button onclick="navigator.clipboard.writeText(localStorage.getItem('walletAddress') || '0xc519118cd0c74879bd3FbF5fEaca473397540862'); alert('Адрес скопирован!')" class="w-full bg-[#1a1a1a] hover:bg-[#222] text-white font-bold py-4 rounded-full mb-4">
-            Скопировать адрес
-        </button>
-        
-        <button onclick="alert('Seed-фраза показывается только один раз при создании. Храните её в безопасности!')" class="w-full bg-[#1a1a1a] hover:bg-[#222] text-white font-bold py-4 rounded-full mb-6">
-            Посмотреть seed-фразу
-        </button>
-        
-        <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-full uppercase tracking-wider">
-            Выйти
-        </button>
-        <button onclick="closeModal()" class="mt-4 text-zinc-400 underline">
-            Закрыть
-        </button>
-    </div>
-</div>
-
 </body>
 </html>
-
-

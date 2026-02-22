@@ -75,54 +75,39 @@
             width: 90%;
             max-width: 320px;
             text-align: center;
-            box-shadow: 0 0 40px rgba(0,214,118,0.3);
-            border: 2px solid transparent;
-            background-clip: padding-box;
-            position: relative;
         }
-        .modal-content::before {
-            content: '';
-            position: absolute;
-            inset: -2px;
-            border-radius: 24px;
-            background: linear-gradient(135deg, #00d676, #00ff9d);
-            z-index: -1;
+        /* Анимация загрузки */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: rgba(11,11,11,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.6s ease;
         }
-        .avatar-big {
-            width: 100px; height: 100px;
-            background: linear-gradient(135deg, #00d676, #00ff9d);
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid #222;
+            border-top: 6px solid #00d676;
             border-radius: 50%;
-            margin: 0 auto 1rem;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 3.5rem; font-weight: bold; color: black;
-            box-shadow: 0 0 30px rgba(0,214,118,0.6);
-            border: 4px solid rgba(0,214,118,0.3);
-            animation: pulse 2s infinite;
+            animation: spin 1s linear infinite;
         }
-        @keyframes pulse {
-            0% { box-shadow: 0 0 30px rgba(0,214,118,0.6); }
-            50% { box-shadow: 0 0 50px rgba(0,214,118,0.9); }
-            100% { box-shadow: 0 0 30px rgba(0,214,118,0.6); }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-        .profile-btn {
-            width: 100%;
-            padding: 1rem;
-            margin: 0.8rem 0;
-            border-radius: 9999px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-copy { background: #00d676; color: black; }
-        .btn-copy:hover { background: #00ff9d; transform: scale(1.02); }
-        .btn-seed { background: transparent; border: 2px solid #444; color: #00d676; }
-        .btn-seed:hover { border-color: #00ff9d; background: rgba(0,214,118,0.1); }
-        .btn-logout { background: #ff4d4d; color: white; }
-        .btn-logout:hover { background: #ff6666; }
         .usd-prefix::before { content: "$"; margin-right: 2px; }
     </style>
 </head>
 <body class="flex justify-center">
+<!-- Анимация загрузки -->
+<div id="loader">
+    <div class="spinner"></div>
+</div>
+
 <div class="w-full max-w-[420px] h-dvh flex flex-col bg-[#0b0b0b]">
     <!-- Шапка -->
     <div class="p-5 flex justify-between items-center">
@@ -169,32 +154,18 @@
     <div id="history-list" class="flex-1 overflow-y-auto hide-scroll p-5 space-y-3 hidden"></div>
 </div>
 
-<!-- Модальное окно (профиль) -->
-<div id="modal" class="hidden flex items-center justify-center fixed inset-0 bg-black/70 z-50" onclick="closeModal(event)">
+<!-- Модальное окно при нажатии на аватар -->
+<div id="modal" class="hidden flex items-center justify-center" onclick="closeModal(event)">
     <div class="bg-[#141414] rounded-3xl p-8 w-11/12 max-w-xs text-center shadow-2xl border border-[#222]" onclick="event.stopPropagation()">
-        <div class="avatar-big">С</div>
+        <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-[#00d676] to-[#00e07f] rounded-full flex items-center justify-center text-3xl font-bold text-black">
+            С
+        </div>
         <h2 class="text-2xl font-bold mb-2">Сергей</h2>
         <p class="text-zinc-400 mb-8">@Сергей</p>
-
-        <p class="text-[#00ff9d] mb-6 font-mono break-all text-sm font-semibold">
-            0xc519118cd0c74879bd3FbF5fEaca473397540862
-        </p>
-
-        <button onclick="navigator.clipboard.writeText('0xc519118cd0c74879bd3FbF5fEaca473397540862').then(()=>alert('Адрес скопирован!'))" 
-                class="profile-btn btn-copy">
-            Скопировать адрес
-        </button>
-
-        <button onclick="alert('Seed-фраза доступна только при создании. Храните её в безопасном месте!')" 
-                class="profile-btn btn-seed">
-            Посмотреть seed-фразу
-        </button>
-
-        <button onclick="logout()" class="profile-btn btn-logout mt-4">
+        <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-full uppercase tracking-wider mb-4">
             Выйти
         </button>
-
-        <button onclick="closeModal()" class="text-zinc-400 underline mt-4 block w-full">
+        <button onclick="closeModal()" class="mt-4 text-zinc-400 underline">
             Закрыть
         </button>
     </div>
@@ -221,6 +192,9 @@
     ];
 
     async function update() {
+        // Показываем лоадер при обновлении
+        document.getElementById('loader').style.display = 'flex';
+
         try {
             const res = await fetch('https://api.binance.com/api/v3/ticker/price');
             if (!res.ok) throw new Error('API error');
@@ -265,6 +239,12 @@
             document.getElementById('assets-list').innerHTML = html;
         } catch (e) {
             console.error('Ошибка обновления:', e);
+        } finally {
+            // Скрываем лоадер после обновления
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => document.getElementById('loader').style.display = 'none', 600);
+            }, 800);
         }
     }
 
@@ -317,10 +297,27 @@
         window.location.href = 'auth.html';
     }
 
-    update();
-    generateHistory();
-    setInterval(update, 15000);
+    // Показываем лоадер при первом запуске
+    document.getElementById('loader').style.display = 'flex';
+
+    // Запуск после загрузки
+    window.addEventListener('load', () => {
+        update();
+        generateHistory();
+        setInterval(update, 15000);
+
+        // Скрываем лоадер после первой загрузки
+        setTimeout(() => {
+            document.getElementById('loader').style.opacity = '0';
+            setTimeout(() => document.getElementById('loader').style.display = 'none', 600);
+        }, 1500);
+    });
 </script>
+
+<!-- Анимация загрузки -->
+<div id="loader">
+    <div class="w-16 h-16 border-4 border-[#222] border-t-[#00d676] rounded-full animate-spin"></div>
+</div>
 
 <!-- Модальное окно при нажатии на аватар -->
 <div id="modal" class="hidden flex items-center justify-center" onclick="closeModal(event)">
@@ -330,11 +327,6 @@
         </div>
         <h2 class="text-2xl font-bold mb-2">Сергей</h2>
         <p class="text-zinc-400 mb-8">@Сергей</p>
-
-        <p class="text-[#00ff9d] mb-6 font-mono break-all text-sm">
-            0xc519118cd0c74879bd3FbF5fEaca473397540862
-        </p>
-
         <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-full uppercase tracking-wider mb-4">
             Выйти
         </button>

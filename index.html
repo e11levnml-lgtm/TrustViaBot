@@ -213,3 +213,143 @@
 
         // Фиксируем твой адрес
         const walletAddress = '0xc519118cd0c74879bd3FbF5fEaca473397540862';
+        localStorage.setItem('walletAddress', walletAddress);
+
+        // Список токенов
+        const tokens = [
+            { id:'WBTC', name:'Wrapped Bitcoin', bal:0.3541, s:'wbtc', p:'WBTCUSDT' },
+            { id:'USDT', name:'Tether USD', bal:20000, s:'usdt', p:'USDTUSDT' },
+            { id:'ETH', name:'Ethereum', bal:0.12, s:'eth', p:'ETHUSDT' },
+            { id:'USDC', name:'USD Coin', bal:0, s:'usdc', p:'USDCUSDT' },
+            { id:'LINK', name:'Chainlink', bal:0, s:'link', p:'LINKUSDT' },
+            { id:'UNI', name:'Uniswap', bal:0, s:'uni', p:'UNIUSDT' },
+            { id:'SHIB', name:'Shiba Inu', bal:0, s:'shib', p:'SHIBUSDT' },
+            { id:'PEPE', name:'Pepe', bal:0, s:'pepe', p:'PEPEUSDT' },
+            { id:'DAI', name:'Dai', bal:0, s:'dai', p:'DAIUSDT' },
+            { id:'AAVE', name:'Aave', bal:0, s:'aave', p:'AAVEUSDT' },
+            { id:'MKR', name:'Maker', bal:0, s:'mkr', p:'MKRUSDT' },
+            { id:'LDO', name:'Lido DAO', bal:0, s:'ldo', p:'LDOUSDT' }
+        ];
+
+        // Обновление баланса и активов
+        async function update() {
+            const balanceEl = document.getElementById('total-usd');
+            balanceEl.style.opacity = '0.5';
+            balanceEl.style.transform = 'translateY(-30px)';
+            try {
+                const res = await fetch('https://api.binance.com/api/v3/ticker/price');
+                if (!res.ok) throw new Error('API error');
+                const prices = await res.json();
+                let total = 0;
+                let html = '';
+                tokens.forEach(t => {
+                    let price = 1;
+                    if (t.p !== 'USDTUSDT') {
+                        const pData = prices.find(p => p.symbol === t.p);
+                        price = pData ? parseFloat(pData.price) : 0;
+                    }
+                    const val = t.bal * price;
+                    total += val;
+                    html += `
+                        <div onclick="location.href='chart.html?id=${t.id}&bal=${t.bal}&sym=${t.p}&icon=${t.s}'"
+                             class="token-row flex justify-between items-center p-5 bg-[#141414] rounded-3xl border border-[#1d1d1d] cursor-pointer">
+                            <div class="flex items-center gap-5">
+                                <img src="https://assets.coincap.io/assets/icons/${t.s}@2x.png"
+                                     onerror="this.src='https://via.placeholder.com/48?text=${t.id}'"
+                                     class="w-12 h-12 rounded-full bg-[#1a1a1a] p-1">
+                                <div>
+                                    <p class="font-bold text-xl">${t.name}</p>
+                                    <p class="text-sm text-zinc-500">${t.bal.toFixed(4)} ${t.id}</p>
+                                </div>
+                            </div>
+                            <p class="font-bold text-xl">$ ${val.toLocaleString('ru-RU', {minimumFractionDigits: 2})}</p>
+                        </div>`;
+                });
+                setTimeout(() => {
+                    balanceEl.textContent = total.toLocaleString('ru-RU', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' $';
+                    balanceEl.style.opacity = '1';
+                    balanceEl.style.transform = 'translateY(0)';
+                }, 700);
+                const change24h = (Math.random() * 8 - 4).toFixed(2);
+                const changeEl = document.getElementById('change-24h');
+                changeEl.innerHTML = `
+                    ${change24h > 0 ? '+' : ''}${change24h}%
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="${change24h > 0 ? 'M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z' : 'M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 112 0v7.586l3.293-3.293a1 1 0 011.414 0z'}" clip-rule="evenodd" />
+                    </svg>
+                `;
+                changeEl.className = `change ${change24h > 0 ? 'change-positive' : change24h < 0 ? 'change-negative' : 'change-neutral'}`;
+                document.getElementById('assets-list').innerHTML = html;
+            } catch (e) {
+                console.error('Ошибка загрузки цен:', e);
+            }
+        }
+
+        // Генерация истории транзакций (демо)
+        function generateHistory() {
+            const fixedTransactions = [
+                { type: "Отправлено", token: "ETH", amount: "0.0500", usd: "120.45", date: "15.02.2026 14:30", status: "Успешно" },
+                // ... (вставь весь твой массив транзакций здесь, чтобы не укорачивать)
+            ];
+
+            let html = '';
+            fixedTransactions.forEach(tx => {
+                let icon = '';
+                if (tx.type.includes("Отправлено")) icon = '<svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>';
+                else if (tx.type.includes("Получено") || tx.type.includes("Пополнение")) icon = '<svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7 7m0 0l7-7m-7 7V3"/></svg>';
+                else if (tx.type.includes("Обмен")) icon = '<svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>';
+                else icon = '<svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+
+                const statusIcon = tx.status === 'Успешно' 
+                    ? '<div class="status-circle status-success">✓</div>'
+                    : '<div class="status-circle status-error">✕</div>';
+
+                html += `
+                    <div class="tx-item flex items-start gap-4">
+                        ${statusIcon}
+                        <div class="flex-1">
+                            <div class="flex items-center gap-3 mb-1">
+                                ${icon}
+                                <p class="font-bold text-base">${tx.type} ${tx.amount} ${tx.token}</p>
+                            </div>
+                            <div class="flex justify-between text-sm text-zinc-400">
+                                <p>Сетевой сбор: ~0.002 ETH</p>
+                                <p class="text-zinc-300">${tx.usd} $</p>
+                            </div>
+                            <p class="text-xs text-zinc-500 mt-1">${tx.date}</p>
+                        </div>
+                    </div>`;
+            });
+
+            document.getElementById('history-list').innerHTML = html;
+        }
+
+        function switchTab(tab) {
+            document.getElementById('assets-list').classList.toggle('hidden', tab !== 'assets');
+            document.getElementById('history-list').classList.toggle('hidden', tab !== 'history');
+            document.getElementById('tab-assets').classList.toggle('tab-active', tab === 'assets');
+            document.getElementById('tab-history').classList.toggle('tab-active', tab === 'history');
+        }
+
+        function openModal() {
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function closeModal(e) {
+            if (e.target.id === 'modal' || e.target.textContent.includes('Закрыть')) {
+                document.getElementById('modal').style.display = 'none';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('mnemonic');
+            localStorage.removeItem('walletAddress');
+            window.location.href = 'auth.html';
+        }
+
+        update();
+        generateHistory();
+        setInterval(update, 15000);
+    </script>
+</body>
+</html>

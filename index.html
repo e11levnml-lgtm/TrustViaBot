@@ -67,10 +67,7 @@
             align-items: center;
             justify-content: center;
             z-index: 100;
-            opacity: 0;
-            transition: opacity 0.4s ease;
         }
-        #modal.show { opacity: 1; }
         .modal-content {
             background: #141414;
             border-radius: 24px;
@@ -78,42 +75,7 @@
             width: 90%;
             max-width: 320px;
             text-align: center;
-            box-shadow: 0 0 40px rgba(0,214,118,0.3);
-            transform: scale(0.8);
-            transition: transform 0.4s ease;
         }
-        #modal.show .modal-content { transform: scale(1); }
-        .avatar-big {
-            width: 100px; height: 100px;
-            background: linear-gradient(135deg, #00d676, #00ff9d);
-            border-radius: 50%;
-            margin: 0 auto 1rem;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 3.5rem; font-weight: bold; color: black;
-            box-shadow: 0 0 30px rgba(0,214,118,0.6);
-            border: 4px solid rgba(0,214,118,0.3);
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { box-shadow: 0 0 30px rgba(0,214,118,0.6); }
-            50% { box-shadow: 0 0 50px rgba(0,214,118,0.9); }
-            100% { box-shadow: 0 0 30px rgba(0,214,118,0.6); }
-        }
-        .profile-btn {
-            width: 100%;
-            padding: 1rem;
-            margin: 0.8rem 0;
-            border-radius: 9999px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-copy { background: #00d676; color: black; }
-        .btn-copy:hover { background: #00ff9d; transform: scale(1.02); }
-        .btn-seed { background: transparent; border: 2px solid #444; color: #00d676; }
-        .btn-seed:hover { border-color: #00ff9d; background: rgba(0,214,118,0.1); }
-        .btn-logout { background: #ff4d4d; color: white; }
-        .btn-logout:hover { background: #ff6666; }
         .usd-prefix::before { content: "$"; margin-right: 2px; }
     </style>
 </head>
@@ -283,13 +245,11 @@
 
     function openModal() {
         document.getElementById('modal').style.display = 'flex';
-        setTimeout(() => document.getElementById('modal').classList.add('show'), 10);
     }
 
     function closeModal(e) {
         if (e.target.id === 'modal' || e.target.textContent.includes('Закрыть')) {
-            document.getElementById('modal').classList.remove('show');
-            setTimeout(() => document.getElementById('modal').style.display = 'none', 400);
+            document.getElementById('modal').style.display = 'none';
         }
     }
 

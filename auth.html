@@ -2,151 +2,17 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TrustVia — Вход</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bip39@3.1.0/index.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustVia — Тест</title>
     <style>
-        body {
-            background: linear-gradient(to bottom, #0b0b0b, #121212);
-            color: white;
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            margin: 0;
-            min-height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-        .logo { width: 6rem; margin-bottom: 1.5rem; filter: drop-shadow(0 0 1.5rem rgba(0,214,118,0.4)); }
-        h1 { font-size: 3.5rem; font-weight: 900; background: linear-gradient(to right, #00d676, #00e07f); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; text-align: center; }
-        .btn {
-            padding: 1.25rem;
-            font-size: 1.125rem;
-            font-weight: 700;
-            border-radius: 9999px;
-            cursor: pointer;
-            width: 100%;
-            max-width: 20rem;
-            margin: 0.75rem 0;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .btn-primary { background: linear-gradient(135deg, #00d676, #00e07f); color: black; border: none; box-shadow: 0 6px 20px rgba(0,214,118,0.35); }
-        .btn-primary:active { transform: scale(0.96); box-shadow: 0 4px 12px rgba(0,214,118,0.5); }
-        .btn-outline { border: 1px solid #444; color: #00d676; background: transparent; }
-        .btn-outline:active { background: rgba(0,214,118,0.12); transform: scale(0.96); }
-        .section { display: none; width: 100%; max-width: 20rem; margin-top: 2rem; }
-        .back { color: #00d676; font-size: 1.1rem; margin-bottom: 1rem; cursor: pointer; }
-        .word-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; background: #111; padding: 1.25rem; border-radius: 1.25rem; border: 1px solid #222; margin: 1.5rem 0; }
-        .word-item { color: #ccc; font-size: 0.875rem; font-family: monospace; text-align: center; padding: 0.625rem; background: #1a1a1a; border-radius: 0.625rem; }
-        textarea { width: 100%; height: 8rem; background: #141414; border: 1px solid #444; color: white; border-radius: 1.5rem; padding: 1rem; font-family: monospace; font-size: 0.95rem; resize: none; }
-        textarea:focus { border-color: #00d676; outline: none; box-shadow: 0 0 0 3px rgba(0,214,118,0.25); }
-        .error { color: #ff4d4d; font-size: 0.875rem; margin-top: 0.5rem; text-align: center; display: none; }
+        body { background:#000; color:#0f0; font-family:sans-serif; text-align:center; padding:40px; }
+        button { padding:20px 40px; font-size:24px; margin:20px; cursor:pointer; background:#0f0; color:#000; border:none; border-radius:12px; }
+        button:active { transform:scale(0.95); }
     </style>
 </head>
 <body>
-
-    <!-- Главный экран -->
-    <div id="main">
-        <img src="https://trustwallet.com/assets/images/media/assets/trust_platform_light.png" class="logo" alt="TrustVia">
-        <h1>TrustVia</h1>
-        <p class="text-zinc-400 mt-2 mb-8 text-center">Ваш Ethereum кошелёк</p>
-
-        <button class="btn btn-primary" onclick="showCreate()">Создать кошелёк</button>
-        <button class="btn btn-outline" onclick="showImport()">Импортировать</button>
-    </div>
-
-    <!-- Создание -->
-    <div id="create" class="section">
-        <div class="back" onclick="showMain()">← Назад</div>
-        <h2 class="text-2xl font-bold mb-4 text-center">Секретная фраза</h2>
-        <p class="text-zinc-400 mb-6 text-center text-sm">Запиши эти слова в правильном порядке. Никому не показывай!</p>
-        <div id="words" class="word-grid"></div>
-        <button class="btn btn-primary mt-6" onclick="goToWalletFromCreate()">Я записал</button>
-    </div>
-
-    <!-- Импорт -->
-    <div id="import" class="section">
-        <div class="back" onclick="showMain()">← Назад</div>
-        <h2 class="text-2xl font-bold mb-4 text-center">Импорт</h2>
-        <p class="text-zinc-400 mb-6 text-center text-sm">Введи 12 или 24 слова через пробел</p>
-        <textarea id="phrase" placeholder="word1 word2 word3 ..."></textarea>
-        <div id="err" class="error"></div>
-        <button class="btn btn-primary mt-6" onclick="goToWalletFromImport()">Восстановить</button>
-    </div>
-
-    <script>
-        const main = document.getElementById('main');
-        const create = document.getElementById('create');
-        const importSec = document.getElementById('import');
-        let mnemonic = '';
-
-        function showMain() {
-            main.style.display = 'block';
-            create.style.display = 'none';
-            importSec.style.display = 'none';
-        }
-
-        function showCreate() {
-            main.style.display = 'none';
-            create.style.display = 'block';
-            importSec.style.display = 'none';
-
-            mnemonic = bip39.generateMnemonic();
-            const words = mnemonic.split(' ');
-            let html = '';
-            words.forEach((w, i) => html += `<div class="word-item">${i+1}. ${w}</div>`);
-            document.getElementById('words').innerHTML = html;
-        }
-
-        function showImport() {
-            main.style.display = 'none';
-            create.style.display = 'none';
-            importSec.style.display = 'block';
-        }
-
-        function goToWalletFromCreate() {
-            if (!confirm('Ты точно записал все слова?\nБольше их не увидишь!')) return;
-            localStorage.setItem('mnemonic', mnemonic);
-            localStorage.setItem('walletAddress', '0xc519118cd0c74879bd3FbF5fEaca473397540862');
-            window.location.href = 'index.html';
-        }
-
-        function goToWalletFromImport() {
-            const phrase = document.getElementById('phrase').value.trim();
-            const err = document.getElementById('err');
-            err.style.display = 'none';
-
-            if (!phrase) {
-                err.textContent = 'Введи фразу';
-                err.style.display = 'block';
-                return;
-            }
-
-            const words = phrase.split(/\s+/).filter(w => w);
-            if (words.length !== 12 && words.length !== 24) {
-                err.textContent = 'Нужно ровно 12 или 24 слова';
-                err.style.display = 'block';
-                return;
-            }
-
-            if (!bip39.validateMnemonic(phrase)) {
-                err.textContent = 'Фраза неверная';
-                err.style.display = 'block';
-                return;
-            }
-
-            if (!confirm('Ты уверен? Это восстановит кошелёк')) return;
-
-            localStorage.setItem('mnemonic', phrase);
-            localStorage.setItem('walletAddress', '0xc519118cd0c74879bd3FbF5fEaca473397540862');
-            window.location.href = 'index.html';
-        }
-
-        showMain();
-    </script>
+    <h1>Тест кнопок</h1>
+    <button onclick="window.location.href='index.html'">Перейти в кошелёк</button>
+    <p style="margin-top:40px;color:#888;">Если после нажатия ничего не происходит — значит index.html нет рядом или он называется иначе.</p>
 </body>
 </html>

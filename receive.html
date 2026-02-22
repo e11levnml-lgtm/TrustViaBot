@@ -18,7 +18,7 @@
 <body class="flex flex-col items-center p-6">
 
     <div class="w-full flex justify-between items-center mb-8">
-        <button onclick="history.back()" class="text-[#00d676] text-3xl font-bold">←</button>
+        <button onclick="location.href='index.html'" class="text-[#00d676] text-3xl font-bold">←</button>
         <h2 class="font-bold text-xl uppercase tracking-wide">Получить</h2>
         <div class="w-10"></div>
     </div>
@@ -28,7 +28,7 @@
     </div>
 
     <div class="qr-box">
-        <img id="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=0x4f8B51E956A3212896677f24E1A90223640e3048" class="w-48 h-48 mx-auto">
+        <img id="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=0xc519118cd0c74879bd3FbF5fEaca473397540862" class="w-48 h-48 mx-auto">
     </div>
 
     <div id="address-card" class="address-card w-full max-w-md mb-6" onclick="copyAddress()">
@@ -38,7 +38,7 @@
 
     <button onclick="shareAddress()" class="btn-share uppercase tracking-wider">Поделиться адресом</button>
 
-    <div id="toast" class="toast hidden">Скопировано в буфер!</div>
+    <div id="toast" class="toast" style="opacity: 0;">Скопировано в буфер!</div>
 
     <script>
         const address = localStorage.getItem('walletAddress') || '0xc519118cd0c74879bd3FbF5fEaca473397540862';
@@ -50,14 +50,12 @@
                 await navigator.clipboard.writeText(address);
                 const toast = document.getElementById('toast');
                 toast.style.opacity = '1';
-                toast.classList.remove('hidden');
                 setTimeout(() => toast.style.opacity = '0', 2000);
             } catch {
                 const toast = document.getElementById('toast');
                 toast.textContent = 'Ошибка копирования';
                 toast.style.background = '#ff4d4d';
                 toast.style.opacity = '1';
-                toast.classList.remove('hidden');
                 setTimeout(() => toast.style.opacity = '0', 2000);
             }
         }
@@ -71,5 +69,4 @@
         }
     </script>
 </body>
-
 </html>

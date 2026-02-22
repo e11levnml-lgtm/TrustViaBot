@@ -225,73 +225,7 @@
                 status: "Успешно"
             },
             {
-                type: "Получено",
-                token: "USDT",
-                amount: "500.00",
-                usd: "500.00",
-                date: "14.02.2026 09:15",
-                status: "Успешно"
-            },
-            {
-                type: "Обмен",
-                token: "WBTC → USDT",
-                amount: "0.0100",
-                usd: "670.25",
-                date: "12.02.2026 18:45",
-                status: "Успешно"
-            },
-            {
-                type: "Отправлено",
-                token: "SHIB",
-                amount: "10000000",
-                usd: "145.80",
-                date: "10.02.2026 22:10",
-                status: "Успешно"
-            },
-            {
-                type: "Вывод",
-                token: "DAI",
-                amount: "200.00",
-                usd: "200.00",
-                date: "05.02.2026 16:55",
-                status: "Ошибка"
-            },
-            {
-                type: "Получено",
-                token: "PEPE",
-                amount: "5000000",
-                usd: "89.50",
-                date: "03.02.2026 11:20",
-                status: "Успешно"
-            },
-            {
-                type: "Пополнение",
-                token: "USDC",
-                amount: "1000.00",
-                usd: "1000.00",
-                date: "01.02.2026 08:40",
-                status: "Успешно"
-            },
-            {
-                type: "Отправлено",
-                token: "LINK",
-                amount: "5.00",
-                usd: "78.90",
-                date: "28.01.2026 13:25",
-                status: "Успешно"
-            }
-            // Добавляй новые транзакции сюда в таком же формате:
-            // , {
-            //     type: "Отправлено",
-            //     token: "UNI",
-            //     amount: "12.50",
-            //     usd: "45.20",
-            //     date: "20.02.2026 19:00",
-            //     status: "Успешно"
-            // }
-        ];
-
-        let html = '';
+                let html = '';
         fixedTransactions.forEach(tx => {
             const statusColor = tx.status === 'Успешно' ? '#00d676' : '#ff4d4d';
             html += `
@@ -360,3 +294,4 @@
 
 </body>
 </html>
+

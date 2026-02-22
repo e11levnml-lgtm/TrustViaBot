@@ -78,7 +78,6 @@
             box-shadow: 0 0 40px rgba(0,214,118,0.3);
             border: 2px solid transparent;
             background-clip: padding-box;
-            position: relative;
         }
         .modal-content::before {
             content: '';
@@ -97,6 +96,12 @@
             font-size: 3.5rem; font-weight: bold; color: black;
             box-shadow: 0 0 30px rgba(0,214,118,0.6);
             border: 4px solid rgba(0,214,118,0.3);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 30px rgba(0,214,118,0.6); }
+            50% { box-shadow: 0 0 50px rgba(0,214,118,0.9); }
+            100% { box-shadow: 0 0 30px rgba(0,214,118,0.6); }
         }
         .profile-btn {
             width: 100%;
@@ -108,12 +113,12 @@
             transition: all 0.2s;
         }
         .btn-copy { background: #00d676; color: black; }
-        .btn-copy:hover { background: #00ff9d; }
+        .btn-copy:hover { background: #00ff9d; transform: scale(1.02); }
         .btn-seed { background: transparent; border: 2px solid #444; color: #00d676; }
         .btn-seed:hover { border-color: #00ff9d; background: rgba(0,214,118,0.1); }
         .btn-logout { background: #ff4d4d; color: white; }
         .btn-logout:hover { background: #ff6666; }
-        .usd-prefix::before { content: "$"; }
+        .usd-prefix::before { content: "$"; margin-right: 2px; }
     </style>
 </head>
 <body class="flex justify-center">
@@ -172,7 +177,7 @@
                 <p class="tx-amount negative">-0.05 ETH</p>
             </div>
             <div class="flex justify-between text-sm mt-2">
-                <p class="text-zinc-400"><span class="usd-prefix">120.45</span></p>
+                <p class="text-zinc-400 usd-prefix">120.45</p>
                 <p class="tx-status status-success">Успешно</p>
             </div>
         </div>
@@ -186,7 +191,7 @@
                 <p class="tx-amount positive">+500 USDT</p>
             </div>
             <div class="flex justify-between text-sm mt-2">
-                <p class="text-zinc-400"><span class="usd-prefix">500.00</span></p>
+                <p class="text-zinc-400 usd-prefix">500.00</p>
                 <p class="tx-status status-success">Успешно</p>
             </div>
         </div>
@@ -200,7 +205,7 @@
                 <p class="tx-amount">0.01 WBTC → 670 USDT</p>
             </div>
             <div class="flex justify-between text-sm mt-2">
-                <p class="text-zinc-400"><span class="usd-prefix">670.25</span></p>
+                <p class="text-zinc-400 usd-prefix">670.25</p>
                 <p class="tx-status status-success">Успешно</p>
             </div>
         </div>
@@ -214,7 +219,7 @@
                 <p class="tx-amount negative">-10,000,000 SHIB</p>
             </div>
             <div class="flex justify-between text-sm mt-2">
-                <p class="text-zinc-400"><span class="usd-prefix">150.00</span></p>
+                <p class="text-zinc-400 usd-prefix">150.00</p>
                 <p class="tx-status status-success">Успешно</p>
             </div>
         </div>
@@ -228,7 +233,7 @@
         <h2 class="text-2xl font-bold mb-2">Сергей</h2>
         <p class="text-zinc-400 mb-8">@Сергей</p>
 
-        <p class="text-zinc-300 mb-6 font-mono break-all text-sm" style="color: #00ff9d;">
+        <p class="text-[#00ff9d] mb-6 font-mono break-all text-sm font-semibold">
             0xc519118cd0c74879bd3FbF5fEaca473397540862
         </p>
 
@@ -322,11 +327,11 @@
 
     function generateHistory() {
         const transactions = [
-            { type: "Отправлено", amount: "-0.05 ETH", usd: "-120.45", date: "15.02.2026 14:30", status: "Успешно" },
-            { type: "Получено", amount: "+500 USDT", usd: "+500.00", date: "14.02.2026 09:15", status: "Успешно" },
-            { type: "Обмен", amount: "0.01 WBTC → 670 USDT", usd: "+670.25", date: "12.02.2026 18:45", status: "Успешно" },
-            { type: "Отправлено", amount: "-10,000,000 SHIB", usd: "-150.00", date: "10.02.2026 22:10", status: "Успешно" },
-            { type: "Вывод", amount: "-200 DAI", usd: "-200.00", date: "05.02.2026 16:55", status: "Ошибка" }
+            { type: "Отправлено", amount: "-0.05 ETH", usd: "120.45", date: "15.02.2026 14:30", status: "Успешно" },
+            { type: "Получено", amount: "+500 USDT", usd: "500.00", date: "14.02.2026 09:15", status: "Успешно" },
+            { type: "Обмен", amount: "0.01 WBTC → 670 USDT", usd: "670.25", date: "12.02.2026 18:45", status: "Успешно" },
+            { type: "Отправлено", amount: "-10,000,000 SHIB", usd: "150.00", date: "10.02.2026 22:10", status: "Успешно" },
+            { type: "Вывод", amount: "-200 DAI", usd: "200.00", date: "05.02.2026 16:55", status: "Ошибка" }
         ];
 
         let html = '';
@@ -387,7 +392,7 @@
         <h2 class="text-2xl font-bold mb-2">Сергей</h2>
         <p class="text-zinc-400 mb-8">@Сергей</p>
 
-        <p class="text-zinc-300 mb-6 font-mono break-all text-sm" style="color: #00ff9d;">
+        <p class="text-[#00ff9d] mb-6 font-mono break-all text-sm font-semibold">
             0xc519118cd0c74879bd3FbF5fEaca473397540862
         </p>
 

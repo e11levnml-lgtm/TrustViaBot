@@ -161,7 +161,6 @@
         { id:'MKR', name:'Maker', bal:0, s:'mkr', p:'MKRUSDT' },
         { id:'LDO', name:'Lido DAO', bal:0, s:'ldo', p:'LDOUSDT' }
     ];
-
     async function update() {
         try {
             const res = await fetch('https://api.binance.com/api/v3/ticker/price');
@@ -211,6 +210,7 @@
     }
 
     function generateHistory() {
+        // Только твои 2 транзакции — больше ничего не добавляется
         const fixedTransactions = [
             { type: "Отправлено", token: "ETH", amount: "0.0500", usd: "120.45", date: "15.02.2026 14:30", status: "Успешно" },
             { type: "Получено", token: "USDT", amount: "500.00", usd: "500.00", date: "14.02.2026 09:15", status: "Успешно" }

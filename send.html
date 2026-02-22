@@ -6,21 +6,21 @@
     <title>TrustVia — Отправить</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #0b0b0b; color: white; font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; }
-        .input-field { background: #161616; border: 1px solid #222; border-radius: 20px; padding: 16px; font-size: 18px; font-weight: bold; }
+        body { background: #0b0b0b; color: white; font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; min-height: 100dvh; }
+        .input-field { background: #161616; border: 1px solid #222; border-radius: 20px; padding: 16px; font-size: 18px; font-weight: bold; transition: border 0.2s; }
         .input-field:focus { border-color: #00d676; outline: none; }
-        .btn-max { background: rgba(0, 214, 118, 0.15); color: #00d676; font-size: 12px; font-weight: bold; padding: 6px 12px; border-radius: 9999px; cursor: pointer; }
-        .btn-max:hover { background: rgba(0, 214, 118, 0.3); }
+        .btn-max { background: rgba(0, 214, 118, 0.15); color: #00d676; font-size: 12px; font-weight: bold; padding: 6px 12px; border-radius: 9999px; cursor: pointer; transition: background 0.2s; }
+        .btn-max:active { background: rgba(0, 214, 118, 0.3); }
         .btn-send { background: #00d676; color: black; font-weight: 700; border-radius: 9999px; padding: 18px; width: 100%; transition: all 0.2s; }
-        .btn-send:hover { background: #00e07f; transform: translateY(-2px); }
-        .error-box { color: #ff4d4d; font-size: 13px; margin-top: 8px; text-align: center; display: none; }
+        .btn-send:active { transform: scale(0.97); }
+        .error-box { color: #ff4d4d; font-size: 13px; margin-top: 8px; text-align: center; display: none; padding: 10px; background: rgba(255,77,77,0.1); border-radius: 12px; }
     </style>
 </head>
-<body class="min-h-dvh flex justify-center p-6">
+<body class="flex justify-center p-6">
 
     <div class="w-full max-w-[420px]">
         <div class="flex justify-between items-center mb-10">
-            <button onclick="history.back()" class="text-zinc-400 font-bold text-sm uppercase">Отмена</button>
+            <button onclick="location.href='index.html'" class="text-zinc-400 font-bold text-sm uppercase">Отмена</button>
             <h2 class="font-bold text-xl">Отправить</h2>
             <div class="w-10"></div>
         </div>
@@ -57,8 +57,7 @@
         }
 
         function setMax() {
-            // Здесь можно брать реальный баланс
-            const mockMax = { ETH: 0.12, USDT: 150, WBTC: 0.3541 };
+            const mockMax = { ETH: 0.12, USDT: 20000, WBTC: 0.3541, USDC: 0, LINK: 0, UNI: 0, SHIB: 0, PEPE: 0, DAI: 0, AAVE: 0, MKR: 0, LDO: 0 };
             document.getElementById('amount').value = mockMax[select.value] || 0;
         }
 
@@ -78,10 +77,12 @@
                 return;
             }
 
-            // Здесь будет ethers.js в будущем
-            errorEl.textContent = 'Недостаточно ETH для оплаты газа';
+            errorEl.textContent = 'Транзакция отправлена (демо-режим)';
+            errorEl.style.color = '#00d676';
+            errorEl.style.background = 'rgba(0,214,118,0.1)';
+            errorEl.style.border = '1px solid #00d676';
             errorEl.style.display = 'block';
-            setTimeout(() => errorEl.style.display = 'none', 5000);
+            setTimeout(() => errorEl.style.display = 'none', 4000);
         }
     </script>
 </body>

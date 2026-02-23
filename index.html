@@ -215,9 +215,47 @@
     function generateHistory() {
         // Только твои 2 транзакции — больше ничего не добавляется
         const fixedTransactions = [
-            { type: "Отправлено", token: "ETH", amount: "0.0500", usd: "120.45", date: "15.02.2026 14:30", status: "Успешно" },
-            { type: "Получено", token: "USDT", amount: "500.00", usd: "500.00", date: "14.02.2026 09:15", status: "Успешно" }
-        ];
+    { type: "Получено", token: "WBTC", amount: "0.0214", usd: "1411,78", date: "21.02.2026 14:10", status: "Успешно" },
+    { type: "Отправлено", token: "USDT", amount: "28.50", usd: "28.50", date: "21.02.2026 11:40", status: "Успешно" },
+    { type: "Получено", token: "ETH", amount: "0.0312", usd: "61.40", date: "20.02.2026 05:25", status: "Успешно" },
+    { type: "Отправлено", token: "AAVE", amount: "0.0905", usd: "11.20", date: "18.02.2026 19:50", status: "Успешно" },
+    { type: "Получено", token: "ETH", amount: "0.0055", usd: "10.80", date: "14.02.2026 15:40", status: "Успешно" },
+    { type: "Отправлено", token: "USDT", amount: "120.00", usd: "120.00", date: "10.02.2026 13:20", status: "Успешно" },
+    { type: "Отправлено", token: "ETH", amount: "0.0268", usd: "50.70", date: "08.02.2026 17:35", status: "Успешно" },
+    { type: "Получено", token: "USDC", amount: "10.50", usd: "10.50", date: "30.01.2026 19:10", status: "Успешно" },
+    { type: "Отправлено", token: "ETH", amount: "0.0253", usd: "79.80", date: "25.01.2026 14:45", status: "Успешно" },
+    { type: "Получено", token: "AAVE", amount: "0.1450", usd: "47.10", date: "20.01.2026 02:20", status: "Успешно" },
+    { type: "Отправлено", token: "USDT", amount: "75.00", usd: "75.00", date: "14.01.2026 08:55", status: "Успешно" },
+    { type: "Отправлено", token: "ETH", amount: "0.0092", usd: "29.40", date: "04.01.2026 05:15", status: "Успешно" },
+    { type: "Отправлено", token: "USDC", amount: "118.00", usd: "118.00", date: "24.12.2025 18:50", status: "Успешно" },
+    { type: "Отправлено", token: "ETH", amount: "0.0142", usd: "41.50", date: "14.12.2025 13:10", status: "Успешно" },
+    { type: "Получено", token: "USDT", amount: "42.00", usd: "42.00", date: "08.12.2025 20:25", status: "Успешно" },
+    { type: "Отправлено", token: "AAVE", amount: "0.3620", usd: "115.00", date: "03.12.2025 09:35", status: "Успешно" },
+    { type: "Отправлено", token: "ETH", amount: "0.0051", usd: "14.80", date: "21.11.2025 17:15", status: "Успешно" },
+    { type: "Отправлено", token: "USDC", amount: "95.50", usd: "95.50", date: "10.11.2025 19:20", status: "Успешно" },
+    { type: "Получено", token: "ETH", amount: "0.0354", usd: "114.10", date: "04.11.2025 12:30", status: "Успешно" },
+    { type: "Отправлено", token: "USDT", amount: "12.00", usd: "12.00", date: "28.10.2025 03:10", status: "Успешно" },
+    { type: "Отправлено", token: "AAVE", amount: "0.0520", usd: "18.60", date: "15.10.2025 07:40", status: "Успешно" },
+    { type: "Получено", token: "ETH", amount: "0.0211", usd: "88.20", date: "09.10.2025 20:05", status: "Успешно" },
+    { type: "Получено", token: "USDC", amount: "25.00", usd: "25.00", date: "25.09.2025 14:20", status: "Успешно" },
+    { type: "Получено", token: "USDT", amount: "105.00", usd: "105.00", date: "12.09.2025 18:45", status: "Успешно" },
+    { type: "Отправлено", token: "ETH", amount: "0.0028", usd: "12.10", date: "05.09.2025 04:12", status: "Успешно" },
+    { type: "Отправлено", token: "USDC", amount: "44.20", usd: "44.20", date: "28.08.2025 11:30", status: "Успешно" },
+    { type: "Получено", token: "ETH", amount: "0.0152", usd: "65.00", date: "20.08.2025 19:15", status: "Успешно" },
+    { type: "Отправлено", token: "USDT", amount: "10.00", usd: "10.00", date: "12.08.2025 03:45", status: "Успешно" },
+    { type: "Получено", token: "AAVE", amount: "0.2100", usd: "72.40", date: "05.08.2025 16:50", status: "Успешно" },
+    { type: "Отправлено", token: "ETH", amount: "0.0094", usd: "40.20", date: "28.07.2025 10:20", status: "Успешно" },
+    { type: "Получено", token: "USDC", amount: "90.00", usd: "90.00", date: "15.07.2025 14:10", status: "Успешно" },
+    { type: "Отправлено", token: "USDT", amount: "55.00", usd: "55.00", date: "02.07.2025 06:30", status: "Успешно" },
+    { type: "Получено", token: "ETH", amount: "0.0281", usd: "120.00", date: "25.06.2025 18:20", status: "Успешно" },
+    { type: "Отправлено", token: "AAVE", amount: "0.1150", usd: "38.90", date: "18.06.2025 11:55", status: "Успешно" },
+    { type: "Получено", token: "USDC", amount: "15.00", usd: "15.00", date: "10.06.2025 04:40", status: "Успешно" },
+    { type: "Отправлено", token: "ETH", amount: "0.0163", usd: "70.10", date: "02.06.2025 20:05", status: "Успешно" },
+    { type: "Получено", token: "USDT", amount: "112.50", usd: "112.50", date: "25.05.2025 15:30", status: "Успешно" },
+    { type: "Отправлено", token: "USDC", amount: "22.00", usd: "22.00", date: "12.05.2025 07:10", status: "Успешно" },
+    { type: "Получено", token: "AAVE", amount: "0.0320", usd: "10.50", date: "01.05.2025 02:15", status: "Успешно" },
+    { type: "Отправлено", token: "ETH", amount: "0.0215", usd: "92.40", date: "20.04.2025 19:40", status: "Успешно" }
+    ];
 
         let html = '';
         fixedTransactions.forEach(tx => {
@@ -288,6 +326,7 @@
 
 </body>
 </html>
+
 
 
 

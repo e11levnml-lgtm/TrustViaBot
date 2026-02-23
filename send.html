@@ -13,22 +13,18 @@
         .btn-max:hover { background: rgba(0, 214, 118, 0.3); }
         .btn-send { background: #00d676; color: black; font-weight: 700; border-radius: 9999px; padding: 18px; width: 100%; transition: all 0.2s; }
         .btn-send:hover { background: #00e07f; transform: translateY(-2px); }
-        .error-box { color: #ff4d4d; font-size: 13px; margin-top: 8px; text-align: center; padding: 12px; background: rgba(255, 77, 77, 0.1); border: 1px solid #ff4d4d; border-radius: 12px; display: none; }
+        .error-box { color: #ff4d4d; font-size: 13px; margin-top: 8px; text-align: center; padding: 12px; background: rgba(255, 77, 77, 0.1); border: 1px solid #ff4d4d; border-radius: 12px; display: none; line-height: 1.5; }
     </style>
 </head>
 <body class="min-h-dvh flex justify-center p-6">
-
     <div class="w-full max-w-[420px]">
         <div class="flex justify-between items-center mb-10">
             <button onclick="history.back()" class="text-zinc-400 font-bold text-sm uppercase tracking-wide">Отмена</button>
             <h2 class="font-bold text-xl">Отправить</h2>
             <div class="w-10"></div>
         </div>
-
         <select id="token-select" class="input-field mb-4 text-[#00d676] font-bold"></select>
-
         <input id="recipient-address" type="text" placeholder="Адрес получателя (0x...)" class="input-field mb-4">
-
         <div class="input-field flex justify-between items-center mb-4">
             <input id="send-amount" type="number" step="any" placeholder="0.00" class="bg-transparent outline-none w-3/5 text-xl font-bold">
             <div class="flex items-center gap-3">
@@ -36,15 +32,12 @@
                 <span class="btn-max" onclick="setMaxAmount()">MAX</span>
             </div>
         </div>
-
         <div id="error-box" class="error-box">Ошибка</div>
-
         <button onclick="handleSend()" class="btn-send uppercase tracking-wider">Отправить</button>
     </div>
-
     <script>
         const tokens = [
-            { id: 'ETH', bal: 0.12 },
+            { id: 'ETH', bal: 0.0001 },  // ← твой реальный баланс ETH
             { id: 'USDT', bal: 20.00 },
             { id: 'WBTC', bal: 0.3541 },
             { id: 'USDC', bal: 0 },
@@ -57,20 +50,23 @@
             { id: 'MKR', bal: 0 },
             { id: 'LDO', bal: 0 }
         ];
-
         const select = document.getElementById('token-select');
         tokens.forEach(t => select.innerHTML += `<option value="${t.id}">${t.id}</option>`);
         select.onchange = () => document.getElementById('token-symbol').textContent = select.value;
 
         function setMaxAmount() {
             const selected = tokens.find(t => t.id === select.value);
-            document.getElementById('send-amount').value = selected.bal.toFixed(4);
+            document.getElementById('send-amount').value = selected.bal.toFixed(6);
         }
 
         function handleSend() {
             const amount = parseFloat(document.getElementById('send-amount').value) || 0;
             const addr = document.getElementById('recipient-address').value.trim();
+            const token = select.value;
+            const bal = tokens.find(t => t.id === token).bal;
             const errorBox = document.getElementById('error-box');
+
+            errorBox.style.display = 'none';
 
             if (!addr || !/^0x[a-fA-F0-9]{40}$/.test(addr)) {
                 errorBox.textContent = 'Неверный адрес получателя';
@@ -82,14 +78,13 @@
                 errorBox.style.display = 'block';
                 return;
             }
-            if (amount > tokens.find(t => t.id === select.value).bal) {
-                errorBox.textContent = 'Недостаточно средств на балансе';
+            if (amount > bal) {
+                errorBox.innerHTML = `Недостаточно ${token}<br>Доступно: ${bal.toFixed(6)} ${token}<br>Необходимо: ${amount.toFixed(6)} ${token}`;
                 errorBox.style.display = 'block';
                 return;
             }
-
-            // Симуляция ошибки газа
-            errorBox.textContent = 'Недостаточно ETH для оплаты сетевого сбора (газа)';
+            // Симуляция недостатка газа (как было у тебя)
+            errorBox.innerHTML = `Недостаточно ETH для газа<br>Доступно: 0.0001 ETH<br>Необходимо: ~0.0088 ETH`;
             errorBox.style.display = 'block';
         }
     </script>

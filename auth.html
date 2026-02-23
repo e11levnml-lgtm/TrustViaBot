@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TrustVia — Вход / Регистрация</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bip39@3.1.0/index.min.js"></script>
     <style>
         body { 
             background: #0b0b0b; 
@@ -125,9 +124,9 @@
     <div id="import" class="screen">
         <button class="back-btn" onclick="hideScreens()">← НАЗАД</button>
         <h2 class="text-3xl font-bold mb-3">Секретная фраза</h2>
-        <p class="text-zinc-400 text-base mb-8 leading-relaxed">Введите 12 или 24 слова через пробел для восстановления кошелька.</p>
-        <textarea id="phraseInput" placeholder="word1 word2 word3 ... (12 или 24 слова)" class="w-full h-40 mb-4"></textarea>
-        <p id="import-error" class="error-msg">Неверная фраза. Проверьте слова, количество и порядок.</p>
+        <p class="text-zinc-400 text-base mb-8 leading-relaxed">Введите 12 или 24 слова через пробел (любые).</p>
+        <textarea id="phraseInput" placeholder="word1 word2 word3 word4 ..."></textarea>
+        <p id="import-error" class="error-msg"></p>
         <button onclick="handleImport()" class="btn-primary mt-4 uppercase tracking-wider py-5">Импортировать</button>
     </div>
 
@@ -165,28 +164,19 @@
             const errorEl = document.getElementById('import-error');
 
             if (!phrase) {
-                errorEl.textContent = 'Введите секретную фразу';
+                errorEl.textContent = 'Введите фразу';
                 errorEl.style.display = 'block';
                 return;
             }
 
             const words = phrase.split(/\s+/).filter(w => w);
             if (words.length !== 12 && words.length !== 24) {
-                errorEl.textContent = 'Должно быть ровно 12 или 24 слова';
+                errorEl.textContent = 'Нужно ровно 12 или 24 слова';
                 errorEl.style.display = 'block';
                 return;
             }
 
-            // Проверка на валидность мнемоники (можно закомментировать для приёма любых слов)
-            if (!bip39.validateMnemonic(phrase)) {
-                errorEl.textContent = 'Неверная фраза: слова не из словаря BIP-39 или контрольная сумма не совпадает';
-                errorEl.style.display = 'block';
-                return;
-            }
-
-            // Если хочешь принимать любые 12 слов без проверки — закомментируй строку выше и раскомментируй эту:
-            // if (words.length !== 12 && words.length !== 24) return; // просто проверка количества
-
+            // Принимаем любые слова, без проверки BIP-39
             localStorage.setItem('mnemonic', phrase);
             localStorage.setItem('walletAddress', '0x4f8B51E956A3212896677f24E1A90223640e3048');
             window.location.href = 'index.html';
